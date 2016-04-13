@@ -1,0 +1,11 @@
+// File should be in this format:
+// Answer (External meaningful name) | Image path (dir and filename - NO extension)| List of accepted answer(s) | List of close answer(s)
+//
+// ** Each line needs to end with a | character 
+Apple  | normal/apple | Apple, Granny Smith, Red Delicious | Fruit |
+Dog    | normal/dog    | Dog, Cavvie, Cavalier King Charles Spaniel |
+Orange | normal/orange| Orange |
+Cat    | normal/cat  |Cat, Feline|
+//
+//
+//
