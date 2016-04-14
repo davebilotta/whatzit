@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -20,7 +21,6 @@ import com.badlogic.gdx.utils.Align;
 import com.davebilotta.whatzit.Question;
 import com.davebilotta.whatzit.Utils;
 import com.davebilotta.whatzit.WhatzIt;
-
 
 public class PlayState extends State {
 
@@ -40,6 +40,8 @@ public class PlayState extends State {
 	private float delay, tick;
 
 	private Player[] players;
+    private boolean init = false;
+    private Rectangle[] playerRect;
 
 	public int numQuestions;
 	public ArrayList<Question> questions;
@@ -47,6 +49,16 @@ public class PlayState extends State {
 
 	private Stage stage;
 	private Skin skin;
+
+    private int touchPlayer;
+
+    // TODO: Figure offset out for real
+    // These are used for rendering UI
+    int yOffset = 10;
+    int s = 10;
+    int scoreSpacer = 50;
+    int left = 5;
+    int right = 5;
 
 	private float questionOverDelay = 5f;
     GlyphLayout layout = new GlyphLayout();
@@ -101,35 +113,31 @@ public class PlayState extends State {
 			break;
 		}
 
-		int ts, del;
+		int ts;
+        float del;
 		switch (difficulty) {
 		case 1:
 			this.difficulty = DIFF.EASY;
-			ts = 128;
-			del = 10;
+			ts = 128; del = 7;
 			break;
 
 		case 2:
 			this.difficulty = DIFF.MEDIUM;
-			ts = 64;
-			del = 7;
+			ts = 64; del = 5;
 			break;
 
 		case 3:
 			this.difficulty = DIFF.HARD;
-			ts = 32;
-			del = 5;
+			ts = 32; del = 3;
 			break;
 
 		case 4:
 			this.difficulty = DIFF.INSANE;
-			ts = 16;
-			del = 2;
+			ts = 16; del = 2;
 			break;
 		default:
 			this.difficulty = DIFF.HARD;
-			ts = 32;
-			del = 5;
+			ts = 32; del = 5;
 			break;
 		}
 
@@ -140,23 +148,26 @@ public class PlayState extends State {
 		// this.delay = 0.01f;
 
 		players = new Player[numPlayers];
+        playerRect = new Rectangle[numPlayers];
+
 		// TODO: Eventually pass all these in
 		// names = new String[numPlayers];
 		// playerNames = new String[numPlayers];
 		//
 		// TODO: Eventually pass in names of players
 		// { "Dave", "Leana", "Lukas", "Jonah" };
+
+       // renderPlayerInfo(sb,true);
+
 		for (int i = 0; i < numPlayers; i++) {
 			// playerNames[i] = "Player " + (i+1);
 			players[i] = new Player(i, "Player " + (i + 1));
 
 		}
-		// TODO: Eventually replace this when there are more than 4 questions
-		// available
+		// TODO: Eventually replace this when there are more than 4 questions available
 		numQuestions = 4;
 
 		// TODO: Show "loading" indicator here
-
 		// TODO: This is redundant for now
 		this.questions = this.game.qm.buildLevel(numQuestions);
 		this.textures = this.game.im.loadQuestionImages(questions);
@@ -164,7 +175,7 @@ public class PlayState extends State {
 		gameover = false;
 		paused = false;
 
-		Utils.log("New game created: number of players = " + this.numPlayers
+       	Utils.log("New game created: number of players = " + this.numPlayers
 				+ ", speed = " + this.difficulty + ", mode = " + this.mode);
 		// Utils.log("Player names are " + Utils.pretty(playerNames, ","));
 
@@ -177,16 +188,38 @@ public class PlayState extends State {
 		/* Here we need to check if the user buzzed in */
 
 		if (Gdx.input.justTouched()) {
+           // Utils.log("Touched X " + Gdx.input.getX());
+            // Create touch rectangle
 
-			// TODO: Add pause button
-			// this.gsm.push(new PauseState(this.game, this.gsm, this));
+            Rectangle touchRect = new Rectangle(Gdx.input.getX(),(this.game.HEIGHT - Gdx.input.getY()),10,10);
 
-			// TODO: Player who 'guessed' is random now, eventually remove
-			Random rand = new Random();
-			int p = rand.nextInt(players.length);
-			this.gsm.push(new InputState(this.game, this.gsm, this, players[p]));
+            // Check overlap with player
+            if (touchedPlayer(touchRect)) {
+                this.gsm.push(new InputState(this.game, this.gsm, this, players[touchPlayer]));
+            }
+            else {
+                // if touchedPause(touchRect) {
+                // this.gsm.push(new PauseState(this.game, this.gsm, this));
+                // }
+            }
 		}
 	}
+
+    public boolean touchedPlayer(Rectangle touchRect) {
+        boolean touched = false;
+
+        for (int i = 0; i < players.length; i++) {
+            //Utils.log("Click is at " + touchRect + ", Checking player " + i + players[i].getRect());
+
+            if (players[i].getRect().overlaps(touchRect)) {
+                touchPlayer = i;
+                touched = true;
+
+            }
+        }
+
+        return touched;
+    }
 
 	// This gets called when returning from the InputState - needs to check
 	// guess
@@ -209,7 +242,6 @@ public class PlayState extends State {
 			} else {
 				player.incorrect(this.game.tm.getTileValue());
 			}
-
 		}
 	}
 
@@ -271,7 +303,6 @@ public class PlayState extends State {
 					this.tick = 0;
 				}
 			}
-
 		}
 		cam.update();
 	}
@@ -318,37 +349,9 @@ public class PlayState extends State {
 	}
 
 	public void renderUI(SpriteBatch sb) {
-		// render names
-		// TODO: Figure offset out for real
-		int yOffset = 10;
-		int s = 10;
-		int scoreSpacer = 50;
-		int left = 5;
-        int right = 5;
 
-		for (int i = 0; i < this.numPlayers; i++) {
-			//
-			// Draw image
-			Texture img = this.game.im.getPlayerImage(i);
-			int p_w = img.getWidth();
-			int p_h = img.getHeight();
-
-			sb.draw(img, left, this.game.HEIGHT - yOffset - p_h);
-			//
-			// Draw name
-			this.game.im.nameFont.draw(sb, players[i].getName(), left + p_w,
-					this.game.HEIGHT - yOffset);
-            layout.setText(this.game.im.nameFont,players[i].getName());
-            float nameWidth = layout.width;
-
-			// Draw score
-			this.game.im.scoreFont.draw(sb, pad(players[i].getScore()), (left
-					+ p_w + +nameWidth + s), this.game.HEIGHT - yOffset);
-            layout.setText(this.game.im.nameFont,Integer.toString(players[i].getScore()));
-            float scoreWidth = layout.width;
-
-			left += (nameWidth + scoreWidth + scoreSpacer + p_w);
-		}
+        // render players
+		renderPlayerInfo(sb);
 
 		// render time
 
@@ -356,15 +359,56 @@ public class PlayState extends State {
 		int t = (int) Math.ceil((double) time);
 		//// TODO: Need to fix these
 		// float timeWidth = this.game.im.timeFont.getBounds(t + "").width;
-       String timeString = Integer.toString(t);
-        layout.setText(this.game.im.timeFont,timeString);
+        String timeString = Integer.toString(t);
+        layout.setText(this.game.im.timeFont, timeString);
         float timeWidth = layout.width + right;
 		this.game.im.timeFont.draw(sb, timeString, this.game.WIDTH - timeWidth,
 				this.game.HEIGHT - yOffset);
-
 	}
 
-	public void renderUINew(SpriteBatch sb) {
+    public void renderPlayerInfo(SpriteBatch sb) {
+        // TODO:
+        // Need to
+        left = right = 5;
+        for (int i = 0; i < this.numPlayers; i++) {
+            //
+            // Draw image
+            Texture img = this.game.im.getPlayerImage(i);
+            int p_w = img.getWidth();
+            int p_h = img.getHeight();
+
+            // Draw image
+            int yPos = this.game.HEIGHT - yOffset - p_h;
+
+            // First time through - need to set positions of all players
+            if (!init) {
+                players[i].setPos(left,yPos,p_w,p_h);
+                if (i == this.numPlayers -1) {
+                    Utils.log("Flipping");
+                    init = true;
+                }
+            }
+            sb.draw(img, left, yPos);
+
+            //
+            // Draw name
+                this.game.im.nameFont.draw(sb, players[i].getName(), left + p_w,
+                        this.game.HEIGHT - yOffset);
+                layout.setText(this.game.im.nameFont, players[i].getName());
+            float nameWidth = layout.width;
+
+            // Draw score
+
+                this.game.im.scoreFont.draw(sb, pad(players[i].getScore()), (left
+                        + p_w + +nameWidth + s), this.game.HEIGHT - yOffset);
+                layout.setText(this.game.im.nameFont, Integer.toString(players[i].getScore()));
+
+            float scoreWidth = layout.width;
+
+            left += (nameWidth + scoreWidth + scoreSpacer + p_w);
+        }
+    }
+    public void renderUINew(SpriteBatch sb) {
 
 		Table table = new Table();
 		table.setFillParent(true);

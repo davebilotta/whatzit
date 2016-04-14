@@ -1,5 +1,6 @@
 package com.davebilotta.whatzit.states;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.davebilotta.whatzit.Utils;
 
 public class Player {
@@ -10,7 +11,12 @@ public class Player {
 	private int correct, incorrect;
 	
 	private int hints;
-	
+    private float x;
+    private float y;
+    private float width;
+    private float height;
+    private Rectangle rect;
+
 	public Player(int id, String name) {
 		this.id = id;
 		this.name = name;
@@ -46,4 +52,22 @@ public class Player {
 	public boolean hasHints() { 
 		return (this.hints > 0);
 	}
+
+    public void setPos(float x, float y, float width, float height) {
+        this.x = x;
+        this.y = y;
+
+        this.rect = new Rectangle(x,y,width,height);
+    }
+    public float getX() {
+        return this.x;
+    }
+
+    public float getY() {
+        return this.y;
+    }
+
+    public Rectangle getRect() {
+        return this.rect;
+    }
 }
