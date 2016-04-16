@@ -16,8 +16,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -35,12 +37,13 @@ public class InputState extends State {
 	private String answer;
 	private Label answerLabel;
 	private boolean exit;
-
+    private String text;
 	private Player player;
 
-	public InputState(WhatzIt game, GameStateManager gsm, PlayState st, Player player) {
+	public InputState(WhatzIt game, GameStateManager gsm, PlayState st, Player player, String text) {
 		super(game, gsm);
-		
+
+        this.text = text;
 		exit = false;
 		
 		this.previousState = st;
@@ -68,7 +71,7 @@ public class InputState extends State {
 		table.add(this.player.getName());
 		
 		table.row();
-		table.add("ENTER YOUR GUESS");
+		table.add(text);
 
 		table.row();
 		answerLabel = new Label("", skin);
@@ -78,62 +81,121 @@ public class InputState extends State {
 		table.row();
 		table.add(" ");
 		
-		String[] row1 = { "q","w","e","r","t","y","u","i","o","p"};
+		String[] row1 = { "q","w","e","r","t","y","u","i","o","p","back"};
 		createRow(table, row1);
 
 		String[] row2 = { "a","s","d","f","g","h","j","k","l"};
 		createRow(table, row2);
 
-		String[] row3 = { "z","x","c","v","b","n","m","Back"};
+		String[] row3 = { "z","x","c","v","space","b","n","m"};
 		createRow(table, row3);
 
-		String[] row6 = {"Cancel","Space","Continue"};
+		String[] row6 = {"cancel","continue"};
 		createRow(table,row6);
 		
 		stage.addActor(table);
 		
 		stage.addListener(new InputListener() {
-			
-			@Override
-			public boolean keyDown(InputEvent event, int keycode) {
-				Utils.log(keycode);
-				char c = (char)(keycode + 65);
-				//Utils.log("Pressed key " + event.getCharacter());
-				addLetter(String.valueOf(c));
-				return false;
-			}
-		});
-	
+
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                Utils.log(keycode);
+                char c = (char) (keycode + 65);
+                //Utils.log("Pressed key " + event.getCharacter());
+                addLetter(String.valueOf(c));
+                return false;
+            }
+        });
 	}
 
 	private void createRow(Table table, String[] layout) {
 		table.row();
-		
-		TextureRegion region = new TextureRegion(this.game.im.getUIButton());
-		TextureRegionDrawable draw = new TextureRegionDrawable(region);
-		Image img = new Image(draw);
-		Button bt;
-		
+
+        // TODO: Move all of these to ImageManager?
+        // Normal size
+		TextureRegion regionUp = new TextureRegion(this.game.im.getUIButton());
+		TextureRegionDrawable drawUp = new TextureRegionDrawable(regionUp);
+        TextureRegion regionDown = new TextureRegion(this.game.im.getUIButton());
+        TextureRegionDrawable drawDown = new TextureRegionDrawable(regionDown);
+
+        // Large size
+        TextureRegion regionUpLarge = new TextureRegion(this.game.im.getUIButtonLarge());
+        TextureRegionDrawable drawUpLarge = new TextureRegionDrawable(regionUpLarge);
+        TextureRegion regionDownLarge = new TextureRegion(this.game.im.getUIButtonLarge());
+        TextureRegionDrawable drawDownLarge = new TextureRegionDrawable(regionDownLarge);
+
+        // Back button
+        TextureRegion backUp = new TextureRegion(this.game.im.getBackButton());
+        TextureRegion backDown = new TextureRegion(this.game.im.getBackButton());
+        TextureRegionDrawable drawBackUp = new TextureRegionDrawable(backUp);
+        TextureRegionDrawable drawBackDown = new TextureRegionDrawable(backDown);
+
+        // Cancel button
+
+
+        // Ok Button
+
+        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
+        TextButton.TextButtonStyle styleLarge = new TextButton.TextButtonStyle();
+        TextButton.TextButtonStyle styleBack = new TextButton.TextButtonStyle();
+        style.up = drawUp;
+        style.down = drawDown;
+        style.font = this.game.im.nameFont;
+
+        styleLarge.up = drawUpLarge;
+        styleLarge.down = drawDownLarge;
+        styleLarge.font = this.game.im.nameFont;
+
+        styleBack.up = drawBackUp;
+        styleBack.down = drawBackDown;
+        styleBack.font = this.game.im.nameFont;
+
+
+        TextButton button;
+
 		HorizontalGroup row = new HorizontalGroup();
 		for (int i = 0; i < layout.length; i++) {
-		
-			bt = new Button(new Image(draw),skin);
-			
+
+			/*bt = new Button(new Image(draw),skin);
+
 			bt.addListener(new UIClickListener(layout[i]));
 			bt.setName(layout[i].toLowerCase());
-			
-			//bt.center();
-			//row.addActor(bt);
-			
+
+            Image im = new Image(this.game.im.getUIButton());
+
 			ImageTextButton img_b = new ImageTextButton(layout[i].toUpperCase().trim(),skin);
 			img_b.setBackground(draw);
 			img_b.addListener(new UIClickListener(layout[i]));
-	
-			row.addActor(img_b);
-			
-		}
 
-		row.align(Align.center);
+			//row.addActor(img_b);
+
+            ImageTextButton.ImageTextButtonStyle imageTextButtonStyle = new ImageTextButton.ImageTextButtonStyle();
+            imageTextButtonStyle.imageUp = draw;
+            imageTextButtonStyle.imageDown = draw;
+
+            imageTextButtonStyle.font = this.game.im.scoreFont;
+            ImageTextButton butt = new ImageTextButton("a",imageTextButtonStyle);
+            TextButton b = new TextButton("a",skin);
+            b.setBackground(draw);
+            b.setZIndex(10);
+
+            Stack s = new Stack();
+            ImageTextButton ib = new ImageTextButton("d",skin);
+            ib.setText("a");
+            ib.setBackground(draw); */
+
+            if (layout[i] == "space") {
+                button = new TextButton(layout[i].toUpperCase().trim(), styleLarge);
+            }
+            else if (layout[i] == "back"){
+                button = new TextButton("",styleBack);
+            }
+            else {
+                button = new TextButton(layout[i].toUpperCase().trim(), style);
+            }
+            row.addActor(button);
+            button.addListener(new UIClickListener(layout[i]));
+        }
 
 		table.add(row);
 	}

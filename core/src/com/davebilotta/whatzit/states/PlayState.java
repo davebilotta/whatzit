@@ -195,7 +195,7 @@ public class PlayState extends State {
 
             // Check overlap with player
             if (touchedPlayer(touchRect)) {
-                this.gsm.push(new InputState(this.game, this.gsm, this, players[touchPlayer]));
+                this.gsm.push(new InputState(this.game, this.gsm, this, players[touchPlayer], "Enter Your Guess"));
             }
             else {
                 // if touchedPause(touchRect) {

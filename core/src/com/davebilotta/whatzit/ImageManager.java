@@ -23,7 +23,7 @@ public class ImageManager {
 	private Texture questionOver;
 	private Texture gameOver;
 	
-	private Texture cancelButton,okButton,uiButton;
+	private Texture cancelButton,okButton,uiButton,uiButtonLarge,backButton;
 	
 	private ArrayList<Texture> images;
 
@@ -117,10 +117,12 @@ public class ImageManager {
 		this.questionOver = addImage("question_over.png");
 		this.gameOver = addImage("game_over.png");
 		
-		this.uiButton = addImage("blue_button09.png");
-		this.cancelButton = addImage("red_button09.png");
+		this.uiButton = addImage("ui/yellow_button10.png");
+		this.uiButtonLarge = addImage("ui/yellow_button03.png");
+
+        this.cancelButton = addImage("red_button09.png");
 		this.okButton = addImage("green_button09.png");
-				
+		this.backButton = addImage("ui/yellow_sliderLeft.png");
 		
 	}
 
@@ -193,6 +195,8 @@ public class ImageManager {
 	public Texture getUIButton() { 
 		return this.uiButton;
 	}
+
+    public Texture getUIButtonLarge() { return this.uiButtonLarge; }
 	
 	public Texture getCancelButton() { 
 		return this.cancelButton;
@@ -201,4 +205,7 @@ public class ImageManager {
 	public Texture getOKButton() { 
 		return this.okButton;
 	}
+
+    public Texture getBackButton() { return this.backButton;
+    }
 }
