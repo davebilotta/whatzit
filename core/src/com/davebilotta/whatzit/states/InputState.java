@@ -1,28 +1,22 @@
 package com.davebilotta.whatzit.states;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.davebilotta.whatzit.Utils;
@@ -30,24 +24,24 @@ import com.davebilotta.whatzit.WhatzIt;
 
 public class InputState extends State {
 
-	private PlayState previousState;
+	private State previousState;
 
 	private Skin skin;
 	private Stage stage;
-	private String answer;
+	private String text;
 	private Label answerLabel;
 	private boolean exit;
-    private String text;
+    private String topText;
 	private Player player;
 
-	public InputState(WhatzIt game, GameStateManager gsm, PlayState st, Player player, String text) {
+	public InputState(WhatzIt game, GameStateManager gsm, State st, Player player, String text) {
 		super(game, gsm);
 
-        this.text = text;
+        this.topText = text;
 		exit = false;
 		
 		this.previousState = st;
-		this.answer = "";
+		this.text = "";
 		this.player = player;
 		
 		this.stage = new Stage(new ScreenViewport());
@@ -68,10 +62,12 @@ public class InputState extends State {
 		table.setFillParent(true);
 
 		table.row();
-		table.add(this.player.getName());
-		
+		if (this.player != null) {
+            table.add(this.player.getName());
+        }
+
 		table.row();
-		table.add(text);
+		table.add(topText);
 
 		table.row();
 		answerLabel = new Label("", skin);
@@ -81,17 +77,20 @@ public class InputState extends State {
 		table.row();
 		table.add(" ");
 		
-		String[] row1 = { "q","w","e","r","t","y","u","i","o","p","back"};
+		String[] row1 = { "q","w","e","r","t","y","u","i","o","p"};
 		createRow(table, row1);
 
 		String[] row2 = { "a","s","d","f","g","h","j","k","l"};
 		createRow(table, row2);
 
-		String[] row3 = { "z","x","c","v","space","b","n","m"};
+		String[] row3 = { "z","x","c","v","space","b","n","m","back"};
 		createRow(table, row3);
 
-		String[] row6 = {"cancel","continue"};
-		createRow(table,row6);
+        table.row();
+        table.add("");
+
+		String[] row4 = {"cancel","continue"};
+		createRow(table,row4);
 		
 		stage.addActor(table);
 		
@@ -150,84 +149,84 @@ public class InputState extends State {
         styleBack.down = drawBackDown;
         styleBack.font = this.game.im.nameFont;
 
+        ImageButton.ImageButtonStyle styleCancel = new ImageButton.ImageButtonStyle();
+        styleCancel.up = new TextureRegionDrawable(new TextureRegion(this.game.im.getCancelButton()));
+        styleCancel.down = new TextureRegionDrawable(new TextureRegion(this.game.im.getCancelButton()));
+
+        ImageButton.ImageButtonStyle styleOK = new ImageButton.ImageButtonStyle();
+        styleOK.up = new TextureRegionDrawable(new TextureRegion(this.game.im.getOKButton()));
+        styleOK.down = new TextureRegionDrawable(new TextureRegion(this.game.im.getOKButton()));
 
         TextButton button;
 
 		HorizontalGroup row = new HorizontalGroup();
 		for (int i = 0; i < layout.length; i++) {
 
-			/*bt = new Button(new Image(draw),skin);
-
-			bt.addListener(new UIClickListener(layout[i]));
-			bt.setName(layout[i].toLowerCase());
-
-            Image im = new Image(this.game.im.getUIButton());
-
-			ImageTextButton img_b = new ImageTextButton(layout[i].toUpperCase().trim(),skin);
-			img_b.setBackground(draw);
-			img_b.addListener(new UIClickListener(layout[i]));
-
-			//row.addActor(img_b);
-
-            ImageTextButton.ImageTextButtonStyle imageTextButtonStyle = new ImageTextButton.ImageTextButtonStyle();
-            imageTextButtonStyle.imageUp = draw;
-            imageTextButtonStyle.imageDown = draw;
-
-            imageTextButtonStyle.font = this.game.im.scoreFont;
-            ImageTextButton butt = new ImageTextButton("a",imageTextButtonStyle);
-            TextButton b = new TextButton("a",skin);
-            b.setBackground(draw);
-            b.setZIndex(10);
-
-            Stack s = new Stack();
-            ImageTextButton ib = new ImageTextButton("d",skin);
-            ib.setText("a");
-            ib.setBackground(draw); */
-
+            boolean right = false;
+            Actor actor;
             if (layout[i] == "space") {
-                button = new TextButton(layout[i].toUpperCase().trim(), styleLarge);
+                actor = new TextButton(layout[i].toUpperCase().trim(), styleLarge);
+
             }
             else if (layout[i] == "back"){
-                button = new TextButton("",styleBack);
+                actor = new TextButton("",styleBack);
             }
+            else if (layout[i] == "cancel"){
+                actor = new ImageButton(styleCancel);
+                right = true;
+
+            }
+            else if (layout[i] == "continue") {
+                actor = new ImageButton(styleOK);
+                right = true;
+            }
+
             else {
-                button = new TextButton(layout[i].toUpperCase().trim(), style);
+                actor = new TextButton(layout[i].toUpperCase().trim(), style);
             }
-            row.addActor(button);
-            button.addListener(new UIClickListener(layout[i]));
+
+            row.addActor(actor);
+            actor.addListener(new UIClickListener(layout[i]));
+
+            if (right) {
+                row.align(Align.right);
+            }
+            row.pad(5f);
+            row.space(5f);
         }
 
 		table.add(row);
+
 	}
 
 	public void removeLetter() {
 		// Handles clicking back
-		if (!this.answer.equals("")) {
-			this.answer = this.answer.substring(0, this.answer.length() - 1);
+		if (!this.text.equals("")) {
+			this.text = this.text.substring(0, this.text.length() - 1);
 		} 
 	}
 
 	public void addLetter(String key) {
 		// Handles adding letter
 		if (key.equals("space")) {
-			this.answer += " ";
+			this.text += " ";
 		} else {
-			this.answer += key;
+			this.text += key;
 		}
 
-		if (answer.equals("")) {
+		if (text.equals("")) {
 			answerLabel.setText(" ");
 			
 		}else { 
-			answerLabel.setText(answer);
+			answerLabel.setText(text);
 		}
 	}
 
 	@Override
 	public void handleInput() {
 		stage.act();
-		this.answerLabel.setText(answer);
-		answerLabel.setText(answer);
+		this.answerLabel.setText(text);
+		answerLabel.setText(text);
 	}
 
 	@Override
@@ -235,11 +234,10 @@ public class InputState extends State {
 		if (exit) { 
 			stage.dispose();
 			this.gsm.set(previousState);
-			if (!this.answer.equals("")) {
-				previousState.notifyGuess(this.player, answer);
+			if (!this.text.equals("")) {
+				previousState.notifyResponse(this.player, text);
 			}
-				
-			
+
 		} else { 
 			handleInput();
 		}
@@ -250,7 +248,10 @@ public class InputState extends State {
 		stage.draw();
 	}
 
-	public class UIClickListener extends ClickListener {
+    @Override
+    public void notifyResponse(Player player, String response) {}
+
+    public class UIClickListener extends ClickListener {
 
 		private String buttonName;
 
@@ -276,5 +277,7 @@ public class InputState extends State {
 			}
 		}
 	}
+
+
 
 }

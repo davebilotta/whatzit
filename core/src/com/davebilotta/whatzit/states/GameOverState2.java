@@ -67,8 +67,13 @@ public class GameOverState2 extends State {
 		sb.end();
 	}
 
-	public void drawCenteredText(SpriteBatch sb, String text, int y,
-			boolean drawMedal) {
+    @Override
+    public void notifyResponse(Player player, String response) {
+
+    }
+
+    public void drawCenteredText(SpriteBatch sb, String text, int y,
+                                 boolean drawMedal) {
 		//TextBounds bounds = this.game.im.nameFont.getBounds(text);
 		//float w = bounds.width;
 		///float h = bounds.height;

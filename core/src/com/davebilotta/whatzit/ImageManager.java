@@ -120,8 +120,8 @@ public class ImageManager {
 		this.uiButton = addImage("ui/yellow_button10.png");
 		this.uiButtonLarge = addImage("ui/yellow_button03.png");
 
-        this.cancelButton = addImage("red_button09.png");
-		this.okButton = addImage("green_button09.png");
+        this.cancelButton = addImage("ui/red_boxCross.png");
+		this.okButton = addImage("ui/green_boxCheckmark.png");
 		this.backButton = addImage("ui/yellow_sliderLeft.png");
 		
 	}

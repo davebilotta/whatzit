@@ -35,4 +35,9 @@ public class PauseState extends State {
 		this.game.im.scoreFont.draw(sb, "GAME PAUSED", this.game.WIDTH/2, this.game.HEIGHT/2);
 		sb.end();
 	}
+
+    @Override
+    public void notifyResponse(Player player, String response) {
+
+    }
 }

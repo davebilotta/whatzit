@@ -32,8 +32,13 @@ public class MenuState extends State {
 	private static int difficulty;
 	private static int mode;
 	private static int numPlayers;
-	
-	public MenuState(WhatzIt game,GameStateManager gsm) {
+
+    @Override
+    public void notifyResponse(Player player, String response) {
+
+    }
+
+    public MenuState(WhatzIt game, GameStateManager gsm) {
 		super(game,gsm);
 		
 		this.game = game;
@@ -47,19 +52,20 @@ public class MenuState extends State {
 		setStage();
 	}
 
+    // TODO: Move this to ImageManager class
 	private void createBasicSkin(){
 		  //Create a font
 		  BitmapFont font = new BitmapFont();
 		  skin = new Skin();
 		  skin.add("default", font);
-		 
+
 		  //Create a texture
 		// Generate a 1x1 white texture and store it in the skin named "white".
 		  Pixmap pixmap = new Pixmap(140, 60, Pixmap.Format.RGBA8888);
 		  pixmap.setColor(Color.WHITE);
 		  pixmap.fill();
 		  skin.add("background",new Texture(pixmap));
-		 
+
 		  //Create a button style
 		  TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
 		  textButtonStyle.up = skin.newDrawable("background", Color.ORANGE);
@@ -67,7 +73,7 @@ public class MenuState extends State {
 		  textButtonStyle.checked = skin.newDrawable("background", Color.NAVY);
 		  textButtonStyle.over = skin.newDrawable("background", Color.WHITE);
 		  textButtonStyle.font = skin.getFont("default");
-		  		  
+
 		  skin.add("default", textButtonStyle);
 
         TextField.TextFieldStyle textFieldStyle =  new TextField.TextFieldStyle();
@@ -77,7 +83,7 @@ public class MenuState extends State {
         skin.add("default", textFieldStyle);
 
 		}
-	
+
 	@Override
 	public void handleInput() {
 	//	if(Gdx.input.justTouched()){
@@ -86,13 +92,15 @@ public class MenuState extends State {
 		stage.act();
 	}
 
-	public void play() { 
-		if ( (MenuState.mode > 0) && (MenuState.difficulty > 0) && (MenuState.numPlayers > 0) ) {
-			stage.dispose();
-			gsm.set(new PlayState(this.game, gsm, MenuState.mode, MenuState.difficulty, MenuState.numPlayers));
-		}
-	}
-	
+    public void nextStage() {
+        if ( (MenuState.mode > 0) && (MenuState.difficulty > 0) && (MenuState.numPlayers > 0) ) {
+            stage.dispose();
+            //gsm.set(new PlayState(this.game, gsm, MenuState.mode, MenuState.difficulty, MenuState.numPlayers));
+            gsm.set(new MainMenuState2(this.game, gsm, MenuState.mode, MenuState.difficulty, MenuState.numPlayers));
+        }
+    }
+
+
 	@Override
 	public void update(float dt) {
 		handleInput();
@@ -206,7 +214,7 @@ public class MenuState extends State {
 		
 		// play row 
         table.row().padTop(getRowSpacing());;
-		playRow.addActor(addButton("Play!"));
+		playRow.addActor(addButton("Next >>>"));
         playRow.space(getButtonSpacing());
 		table.add(playRow);
 
@@ -272,7 +280,7 @@ public class MenuState extends State {
 			}
 			
 			else {
-				play();
+                nextStage();
 			}
 			
 			Utils.log("Received button event = current difficulty is " + MenuState.difficulty + ", mode is " + MenuState.mode + ", num players is " + MenuState.numPlayers);

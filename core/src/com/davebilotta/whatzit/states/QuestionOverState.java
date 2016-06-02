@@ -231,6 +231,9 @@ public class QuestionOverState extends State {
 		skin.add("default", textButtonStyle);
 	
 	} */
-	 
-	
+
+    @Override
+    public void notifyResponse(Player player, String response) {
+
+    }
 }

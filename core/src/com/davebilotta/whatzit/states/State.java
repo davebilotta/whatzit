@@ -3,6 +3,7 @@ package com.davebilotta.whatzit.states;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
+import com.davebilotta.whatzit.Utils;
 import com.davebilotta.whatzit.WhatzIt;
 
 public abstract class State {
@@ -22,5 +23,6 @@ public abstract class State {
 	public abstract void handleInput();
 	public abstract void update(float dt);
 	public abstract void render(SpriteBatch sb);
+    public abstract void notifyResponse(Player player, String response);
 
 }

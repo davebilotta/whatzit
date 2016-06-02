@@ -69,7 +69,12 @@ public class GameOverState extends State {
 		handleInput();
 	}
 
-	public void setStage() {
+    @Override
+    public void notifyResponse(Player player, String response) {
+
+    }
+
+    public void setStage() {
 		Image bkg = new Image(this.game.im.getBkg());
 		bkg.setSize(this.game.WIDTH, this.game.HEIGHT);
 		stage.addActor(bkg);

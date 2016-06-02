@@ -24,7 +24,9 @@ import com.davebilotta.whatzit.WhatzIt;
 
 public class PlayState extends State {
 
-	public enum MODE {
+    private final String[] playerNames;
+
+    public enum MODE {
 		NORMAL, MACRO, MIXED
 	}
 
@@ -89,7 +91,7 @@ public class PlayState extends State {
 	}
 
 	public PlayState(WhatzIt game, GameStateManager gsm, int mode,
-			int difficulty, int numPlayers) {
+			int difficulty, String[] playerNames) {
 		super(game, gsm);
 
 		createBasicSkin();
@@ -100,7 +102,9 @@ public class PlayState extends State {
 
 		this.game.qm.loadQuestions();
 		
-		this.numPlayers = numPlayers;
+		this.playerNames = playerNames;
+
+        this.numPlayers = playerNames.length;
 		switch (mode) {
 		case 1:
 			this.mode = MODE.NORMAL;
@@ -150,18 +154,12 @@ public class PlayState extends State {
 		players = new Player[numPlayers];
         playerRect = new Rectangle[numPlayers];
 
-		// TODO: Eventually pass all these in
-		// names = new String[numPlayers];
-		// playerNames = new String[numPlayers];
-		//
-		// TODO: Eventually pass in names of players
-		// { "Dave", "Leana", "Lukas", "Jonah" };
-
-       // renderPlayerInfo(sb,true);
+		// renderPlayerInfo(sb,true);
 
 		for (int i = 0; i < numPlayers; i++) {
 			// playerNames[i] = "Player " + (i+1);
-			players[i] = new Player(i, "Player " + (i + 1));
+			//players[i] = new Player(i, "Player " + (i + 1));
+            players[i] = new Player(i, this.playerNames[i]);
 
 		}
 		// TODO: Eventually replace this when there are more than 4 questions available
@@ -223,27 +221,6 @@ public class PlayState extends State {
 
 	// This gets called when returning from the InputState - needs to check
 	// guess
-	public void notifyGuess(Player player, String userGuess) {
-		if (!userGuess.equals("")) {
-			//
-			Utils.log("Was just notified of a guess: " + userGuess);
-
-			// If a correct guess, change to QuestionOverState, passing in
-			// player and score
-			if (this.game.qm.checkGuess(userGuess)) {
-				int score = this.game.tm.getWinScore();
-
-				player.correct(score);
-
-				questionover = true;
-				this.gsm.push(new QuestionOverState(this.game, this.gsm, this,
-						player, score));
-
-			} else {
-				player.incorrect(this.game.tm.getTileValue());
-			}
-		}
-	}
 
 	@Override
 	public void update(float dt) {
@@ -430,5 +407,29 @@ public class PlayState extends State {
 	public String pad(int num) {
 		return String.format("%03d", num);
 	}
+
+    @Override
+    public void notifyResponse(Player player, String response) {
+        if (!response.equals("")) {
+            //
+            Utils.log("PlayState was just notified of a response: " + response);
+
+            // If a correct guess, change to QuestionOverState, passing in
+            // player and score
+            if (this.game.qm.checkGuess(response)) {
+                int score = this.game.tm.getWinScore();
+
+                player.correct(score);
+
+                questionover = true;
+                this.gsm.push(new QuestionOverState(this.game, this.gsm, this,
+                        player, score));
+
+            } else {
+                player.incorrect(this.game.tm.getTileValue());
+            }
+        }
+
+}
 
 }
