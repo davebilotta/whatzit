@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -26,12 +27,23 @@ import com.davebilotta.whatzit.WhatzIt;
 
 public class MenuState extends State {
 
-	private Skin skin;
+	private Skin skin, skinLabel;
 	private Stage stage;
 	
 	private static int difficulty;
 	private static int mode;
 	private static int numPlayers;
+
+    // These are fields for the descriptor rows below the choices
+    // Init text as nil
+    private String gameModeRowLabelText = "";
+    private TextField gameModeRowLabelTextField;
+
+    private String difficultyRowLabelText = "";
+    private TextField difficultyRowLabelTextField;
+
+    private String numPlayersRowLabelText = "";
+    private TextField numPlayersRowLabelTextField;
 
     @Override
     public void notifyResponse(Player player, String response) {
@@ -59,6 +71,7 @@ public class MenuState extends State {
 		  skin = new Skin();
 		  skin.add("default", font);
 
+
 		  //Create a texture
 		// Generate a 1x1 white texture and store it in the skin named "white".
 		  Pixmap pixmap = new Pixmap(140, 60, Pixmap.Format.RGBA8888);
@@ -69,9 +82,9 @@ public class MenuState extends State {
 		  //Create a button style
 		  TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
 		  textButtonStyle.up = skin.newDrawable("background", Color.ORANGE);
-		  textButtonStyle.down = skin.newDrawable("background", Color.NAVY);
-		  textButtonStyle.checked = skin.newDrawable("background", Color.NAVY);
-		  textButtonStyle.over = skin.newDrawable("background", Color.WHITE);
+		  textButtonStyle.down = skin.newDrawable("background", Color.DARK_GRAY);
+		  textButtonStyle.checked = skin.newDrawable("background", Color.DARK_GRAY);
+		  textButtonStyle.over = skin.newDrawable("background", Color.CORAL);
 		  textButtonStyle.font = skin.getFont("default");
 
 		  skin.add("default", textButtonStyle);
@@ -82,7 +95,22 @@ public class MenuState extends State {
 
         skin.add("default", textFieldStyle);
 
-		}
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("ui/AlfaSlabOne-Regular.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 14;
+        BitmapFont labelFont = generator.generateFont(parameter);
+        generator.dispose();
+
+        skinLabel = new Skin();
+        skinLabel.add("default", labelFont);
+        TextField.TextFieldStyle labelStyle =  new TextField.TextFieldStyle();
+       // labelStyle.font = skin.getFont("default");
+       labelStyle.font = labelFont;
+        labelStyle.fontColor = Color.TAN;
+        skinLabel.add("default",labelStyle);
+
+        }
 
 	@Override
 	public void handleInput() {
@@ -108,6 +136,11 @@ public class MenuState extends State {
 	}
 
     public TextField addText(String text) {
+        return new TextField(text,skin);
+
+    }
+
+    public TextField addText(String text, Skin skin) {
         return new TextField(text,skin);
 
     }
@@ -146,15 +179,15 @@ public class MenuState extends State {
 		HorizontalGroup row2 = new HorizontalGroup();
 		HorizontalGroup row3 = new HorizontalGroup();
 		HorizontalGroup playRow = new HorizontalGroup();
-		
-		// Game mode
-        // Row 1 label
-		table.row().align(Align.left);
+
+        //
+        // Game mode
+        //
+        table.row().align(Align.left);
         HorizontalGroup row1Label = new HorizontalGroup();
         row1Label.addActor(addText("Game Mode"));
         table.add(row1Label);
 
-        // Row 1
         table.row().align(Align.left);
 		ButtonGroup row1_buttonGroup = new ButtonGroup();
 		row1.addActor(addButton("Normal", row1_buttonGroup));
@@ -164,6 +197,13 @@ public class MenuState extends State {
 		row1_buttonGroup.uncheckAll();
         row1.space(getButtonSpacing());
         table.add(row1);
+
+        //
+        // Game Mode explanation
+        //
+        table.row().align(Align.left);
+        gameModeRowLabelTextField = addText(gameModeRowLabelText,skinLabel);
+        table.add(gameModeRowLabelTextField).minWidth(500);
 
         //
 		// Difficulty
@@ -182,10 +222,16 @@ public class MenuState extends State {
 		row2.addActor(addButton("Insane", row2_buttonGroup));
 		row2_buttonGroup.uncheckAll();
 
-		//row2.align(Align.left);
 		row2.sizeBy(0.5f);
         row2.space(getButtonSpacing());
         table.add(row2);
+
+        //
+        // Difficulty explanation
+        //
+        table.row().align(Align.left);
+        difficultyRowLabelTextField = addText(difficultyRowLabelText,skinLabel);
+        table.add(difficultyRowLabelTextField).minWidth(500);
 
         //
         // Number of players
@@ -195,7 +241,6 @@ public class MenuState extends State {
         row3Label.addActor(addText("Number Of Players"));
         table.add(row3Label);
 
-        //
 		table.row();
 		ButtonGroup row3_buttonGroup = new ButtonGroup();
 		row3_buttonGroup.setMaxCheckCount(1);
@@ -210,9 +255,17 @@ public class MenuState extends State {
 		row3.sizeBy(0.5f);
         row3.space(getButtonSpacing());
 		table.add(row3);
-		
-		
-		// play row 
+
+        //
+        // Number Of Players Explanation
+        //
+        table.row().align(Align.left);
+        numPlayersRowLabelTextField = addText(numPlayersRowLabelText,skinLabel);
+        table.add(numPlayersRowLabelTextField).minWidth(500);
+
+        //
+		// Play row
+        //
         table.row().padTop(getRowSpacing());;
 		playRow.addActor(addButton("Next >>>"));
         playRow.space(getButtonSpacing());
@@ -238,56 +291,71 @@ public class MenuState extends State {
 		public void clicked(InputEvent event, float x, float y) {
 			Utils.log("Clicked " + this.button);
 			super.clicked(event, x, y);
-			
+
 			// Mode
 			if (this.button.equals("normal")) {
 				MenuState.mode = 1;
-				return;
+                gameModeRowLabelText = "Normal images";
 			}
 			else if (this.button.equals("macro")) {
 				MenuState.mode = 2;
+                gameModeRowLabelText = "Macro images";
 			}
 			else if (this.button.equals("mixed")) {
 				MenuState.mode = 3;
+                gameModeRowLabelText = "A mixture of normal and macro images";
+
 			}
-			
+
 			// Difficulty
 			else if (this.button.equals("easy")) {
 				MenuState.difficulty = 1;
+                difficultyRowLabelText = "Large tiles, slow speed";
 			}
 			else if (this.button.equals("medium")) {
 				MenuState.difficulty = 2;
+                difficultyRowLabelText = "Medium tiles, Medium speed";
 			}
 			else if (this.button.equals("hard")) {
 				MenuState.difficulty = 3;
+                difficultyRowLabelText = "Small tiles, fast speed";
 			}
 			else if (this.button.equals("insane")) {
 				MenuState.difficulty = 4;
+                difficultyRowLabelText = "Tiny tiles, very fast speed";
 			}
 			
 			// Number of players 
 			else if (this.button.equals("one")) { 
 				MenuState.numPlayers = 1;
+                numPlayersRowLabelText = "Solo mode!";
 			}
 			else if (this.button.equals("two")) {
 				MenuState.numPlayers = 2;
-			}
+                numPlayersRowLabelText = "Two-on-two";
+            }
 			else if (this.button.equals("three")) {
 				MenuState.numPlayers = 3;
-			} 
+                numPlayersRowLabelText = "Three's a crowd";
+            }
 			else if (this.button.equals("four")) {
 				MenuState.numPlayers = 4;
-			}
+                numPlayersRowLabelText = "The max";
+            }
 			
 			else {
                 nextStage();
 			}
 			
 			Utils.log("Received button event = current difficulty is " + MenuState.difficulty + ", mode is " + MenuState.mode + ", num players is " + MenuState.numPlayers);
-		} 
+
+            gameModeRowLabelTextField.setText(gameModeRowLabelText);
+            difficultyRowLabelTextField.setText(difficultyRowLabelText);
+            numPlayersRowLabelTextField.setText(numPlayersRowLabelText);
+
+        }
 		
 	}
-
 
 }
 
