@@ -39,6 +39,8 @@ public class MainMenuState2 extends State {
     private int numPlayers;
     private int playerId;
 
+    private TextField[] playerNamesTF;
+
     public MainMenuState2(WhatzIt game, GameStateManager gsm, int mode, int difficulty, int numPlayers) {
         super(game,gsm);
 
@@ -48,9 +50,10 @@ public class MainMenuState2 extends State {
         this.mode = mode;
         this.numPlayers = numPlayers;
 
+        createBasicSkin();
+
         populatePlayerNames(numPlayers);
 
-        createBasicSkin();
         setStage();
 
     }
@@ -110,7 +113,8 @@ public class MainMenuState2 extends State {
             ImageButton icon = new ImageButton(buttonStyle);
             icon.addListener(new UIClickListener(i));
             row.addActor(icon);
-            row.addActor(addText(playerNames[i]));
+            row.addActor(playerNamesTF[i]);
+
             table.add(row);
 
         }
@@ -129,8 +133,12 @@ public class MainMenuState2 extends State {
 
     public void populatePlayerNames(int numPlayers) {
         playerNames = new String[numPlayers];
+        playerNamesTF = new TextField[numPlayers];
+
         for (int i = 0; i < numPlayers; i++) {
             playerNames[i] = "Player " + (i + 1);
+            playerNamesTF[i] = addText(playerNames[i]);
+
         }
     }
     public TextField addText(String text) {
@@ -197,9 +205,11 @@ public class MainMenuState2 extends State {
         @Override
         public void clicked(InputEvent event, float x, float y) {
             super.clicked(event, x, y);
+            Utils.log("CLICKED");
 
             if (this.playerButton) {
                playerId = this.id;
+                // TODO: Do we need to do anything with the stage here?
                 gsm.push(new InputState(game, gsm, state, null, "Enter name for player " + (this.id + 1)));
             }
             else play();
@@ -221,7 +231,11 @@ public class MainMenuState2 extends State {
         if (!response.equals("")) {
             Utils.log("Was just notified of a response: " + response + ", player " + player);
             playerNames[playerId] = response;
-            setStage();
+            playerNamesTF[playerId].setText(response);
+
+            Gdx.input.setInputProcessor(stage);
+
+            // setStage();
         }
 
 }
