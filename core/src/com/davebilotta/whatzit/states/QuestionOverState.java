@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -30,9 +31,11 @@ public class QuestionOverState extends State {
 	private PlayState previousState;
 	private Player winner;
 	private int score;
-
+    private float rowSpacing = 30f;
 	private Skin skin;
 	private Stage stage;
+
+    TextField.TextFieldStyle uiFontStyle;
 
 	public QuestionOverState(WhatzIt game, GameStateManager gsm, PlayState st,
 			Player winner, int score) {
@@ -47,7 +50,11 @@ public class QuestionOverState extends State {
 		Gdx.input.setInputProcessor(stage);
 
 		this.skin = new Skin(Gdx.files.internal("uiskin.json"), new TextureAtlas("uiskin.atlas"));
-		
+
+        uiFontStyle = new TextField.TextFieldStyle();
+        uiFontStyle.font = this.game.im.uiFont;
+        uiFontStyle.fontColor = Color.MAROON;
+
 		setStage();
 	}
 
@@ -63,12 +70,12 @@ public class QuestionOverState extends State {
 		
 		Table table = new Table(skin);
 		table.setFillParent(true);
+        table.setDebug(true);
 
-		String winnerName, winnerScore;
+       String winnerName, winnerScore;
 
-		table.row();
-		//table.add("QUESTION OVER!");
-		table.add(new Image(this.game.im.getQuestionOverImg()));
+		table.row().padBottom(rowSpacing).expandX().align(Align.center);
+	    table.add(new TextField("Question Over",uiFontStyle)).fillX();
 
 		// Winner name
 		table.row();

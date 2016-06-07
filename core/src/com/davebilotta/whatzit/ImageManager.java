@@ -10,11 +10,13 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 
 public class ImageManager {
 
 	private WhatzIt game;
-	public BitmapFont nameFont, scoreFont, timeFont;
+	public BitmapFont nameFont, scoreFont, timeFont, uiFont;
+    public TextField.TextFieldStyle uiFontStyle;
 	private Texture tileEASY, tileMEDIUM, tileHARD, tileINSANE;
 	private Texture medal;
 	private Texture p1, p2, p3, p4;
@@ -53,6 +55,10 @@ public class ImageManager {
 		parameterLarge.size = 36;
 		parameterLarge.characters = parameter.characters;
 
+        FreeTypeFontParameter uiParameter = new FreeTypeFontParameter();
+        uiParameter.size = 60;
+        uiParameter.characters = parameter.characters;
+
 		this.nameFont = generator.generateFont(parameterSmall);
 		this.nameFont.setColor(Color.BLUE);
 
@@ -61,6 +67,10 @@ public class ImageManager {
 
 		this.timeFont = generator.generateFont(parameterLarge);
 		this.timeFont.setColor(Color.RED);
+
+        this.uiFont = generator.generateFont(uiParameter);
+        this.uiFont.setColor(Color.MAROON);
+
 		generator.dispose();
 
 	}
@@ -123,7 +133,6 @@ public class ImageManager {
         this.cancelButton = addImage("ui/red_boxCross.png");
 		this.okButton = addImage("ui/green_boxCheckmark.png");
 		this.backButton = addImage("ui/yellow_sliderLeft.png");
-		
 	}
 
 	public void dispose() {

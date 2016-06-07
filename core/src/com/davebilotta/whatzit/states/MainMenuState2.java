@@ -55,7 +55,6 @@ public class MainMenuState2 extends State {
         populatePlayerNames(numPlayers);
 
         setStage();
-
     }
 
     // TODO: Move this to ImageManager class?
@@ -119,7 +118,7 @@ public class MainMenuState2 extends State {
 
         }
 
-       HorizontalGroup playRow = new HorizontalGroup();
+        HorizontalGroup playRow = new HorizontalGroup();
 
         // play row
         table.row().padTop(getRowSpacing());;

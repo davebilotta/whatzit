@@ -95,7 +95,6 @@ public class MenuState extends State {
 
         skin.add("default", textFieldStyle);
 
-
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("ui/AlfaSlabOne-Regular.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 14;

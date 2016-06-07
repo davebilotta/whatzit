@@ -98,11 +98,13 @@ public class InputState extends State {
 
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                Utils.log(keycode);
-                char c = (char) (keycode + 65);
-                //Utils.log("Pressed key " + event.getCharacter());
-                addLetter(String.valueOf(c));
+                if (keycode > 28 && keycode < 55) {
+                    keycode += 36; // not sure why keycodes aren't corresponding to ASCII values.
+                    addLetter((char) keycode);
+
+                }
                 return false;
+
             }
         });
 	}
@@ -205,6 +207,10 @@ public class InputState extends State {
 			this.text = this.text.substring(0, this.text.length() - 1);
 		} 
 	}
+
+    public void addLetter(char c) {
+        addLetter(c + "");
+    }
 
 	public void addLetter(String key) {
 		// Handles adding letter
