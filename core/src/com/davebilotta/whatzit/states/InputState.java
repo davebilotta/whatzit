@@ -98,10 +98,23 @@ public class InputState extends State {
 
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
+                Utils.log("KEY DOWN IS " + keycode);
+                // letters
                 if (keycode > 28 && keycode < 55) {
                     keycode += 36; // not sure why keycodes aren't corresponding to ASCII values.
                     addLetter((char) keycode);
-
+                }
+                // Space (62)
+                else if (keycode == 62) {
+                    addLetter("space");
+                }
+                // Back (67)
+                else if (keycode == 67) {
+                    removeLetter();
+                }
+                // Return (66)
+                else if (keycode == 66) {
+                    exit = true;
                 }
                 return false;
 

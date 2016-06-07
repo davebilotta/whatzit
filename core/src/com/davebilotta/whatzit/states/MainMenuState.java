@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -17,15 +16,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.davebilotta.whatzit.Utils;
 import com.davebilotta.whatzit.WhatzIt;
 
-public class MenuState extends State {
+public class MainMenuState extends State {
 
 	private Skin skin, skinLabel;
 	private Stage stage;
@@ -50,7 +47,7 @@ public class MenuState extends State {
 
     }
 
-    public MenuState(WhatzIt game, GameStateManager gsm) {
+    public MainMenuState(WhatzIt game, GameStateManager gsm) {
 		super(game,gsm);
 		
 		this.game = game;
@@ -120,10 +117,10 @@ public class MenuState extends State {
 	}
 
     public void nextStage() {
-        if ( (MenuState.mode > 0) && (MenuState.difficulty > 0) && (MenuState.numPlayers > 0) ) {
+        if ( (MainMenuState.mode > 0) && (MainMenuState.difficulty > 0) && (MainMenuState.numPlayers > 0) ) {
             stage.dispose();
-            //gsm.set(new PlayState(this.game, gsm, MenuState.mode, MenuState.difficulty, MenuState.numPlayers));
-            gsm.set(new MainMenuState2(this.game, gsm, MenuState.mode, MenuState.difficulty, MenuState.numPlayers));
+            //gsm.set(new PlayState(this.game, gsm, MainMenuState.mode, MainMenuState.difficulty, MainMenuState.numPlayers));
+            gsm.set(new MainMenuState2(this.game, gsm, MainMenuState.mode, MainMenuState.difficulty, MainMenuState.numPlayers));
         }
     }
 
@@ -293,52 +290,52 @@ public class MenuState extends State {
 
 			// Mode
 			if (this.button.equals("normal")) {
-				MenuState.mode = 1;
+				MainMenuState.mode = 1;
                 gameModeRowLabelText = "Normal images";
 			}
 			else if (this.button.equals("macro")) {
-				MenuState.mode = 2;
+				MainMenuState.mode = 2;
                 gameModeRowLabelText = "Macro images";
 			}
 			else if (this.button.equals("mixed")) {
-				MenuState.mode = 3;
+				MainMenuState.mode = 3;
                 gameModeRowLabelText = "A mixture of normal and macro images";
 
 			}
 
 			// Difficulty
 			else if (this.button.equals("easy")) {
-				MenuState.difficulty = 1;
+				MainMenuState.difficulty = 1;
                 difficultyRowLabelText = "Large tiles, slow speed";
 			}
 			else if (this.button.equals("medium")) {
-				MenuState.difficulty = 2;
+				MainMenuState.difficulty = 2;
                 difficultyRowLabelText = "Medium tiles, Medium speed";
 			}
 			else if (this.button.equals("hard")) {
-				MenuState.difficulty = 3;
+				MainMenuState.difficulty = 3;
                 difficultyRowLabelText = "Small tiles, fast speed";
 			}
 			else if (this.button.equals("insane")) {
-				MenuState.difficulty = 4;
+				MainMenuState.difficulty = 4;
                 difficultyRowLabelText = "Tiny tiles, very fast speed";
 			}
 			
 			// Number of players 
 			else if (this.button.equals("one")) { 
-				MenuState.numPlayers = 1;
+				MainMenuState.numPlayers = 1;
                 numPlayersRowLabelText = "Solo mode!";
 			}
 			else if (this.button.equals("two")) {
-				MenuState.numPlayers = 2;
+				MainMenuState.numPlayers = 2;
                 numPlayersRowLabelText = "Two-on-two";
             }
 			else if (this.button.equals("three")) {
-				MenuState.numPlayers = 3;
+				MainMenuState.numPlayers = 3;
                 numPlayersRowLabelText = "Three's a crowd";
             }
 			else if (this.button.equals("four")) {
-				MenuState.numPlayers = 4;
+				MainMenuState.numPlayers = 4;
                 numPlayersRowLabelText = "The max";
             }
 			
@@ -346,7 +343,7 @@ public class MenuState extends State {
                 nextStage();
 			}
 			
-			Utils.log("Received button event = current difficulty is " + MenuState.difficulty + ", mode is " + MenuState.mode + ", num players is " + MenuState.numPlayers);
+			Utils.log("Received button event = current difficulty is " + MainMenuState.difficulty + ", mode is " + MainMenuState.mode + ", num players is " + MainMenuState.numPlayers);
 
             gameModeRowLabelTextField.setText(gameModeRowLabelText);
             difficultyRowLabelTextField.setText(difficultyRowLabelText);

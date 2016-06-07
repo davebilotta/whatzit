@@ -1,7 +1,6 @@
 package com.davebilotta.whatzit.states;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 
 import com.badlogic.gdx.Gdx;
@@ -18,9 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.davebilotta.whatzit.Utils;
 import com.davebilotta.whatzit.WhatzIt;
-import com.davebilotta.whatzit.states.QuestionOverState.UIClickListener;
 
 public class GameOverState extends State {
 	private Skin skin;
@@ -161,7 +158,7 @@ public class GameOverState extends State {
 		stage.dispose();
 		//this.gsm.set(previousState);
 		previousState.waiting = false;
-		this.gsm.set(new MenuState(this.game,gsm));
+		this.gsm.set(new MainMenuState(this.game,gsm));
 	}
 
 	public class UIClickListener extends ClickListener {

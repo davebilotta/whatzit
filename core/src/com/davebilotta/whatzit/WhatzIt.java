@@ -5,8 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.davebilotta.whatzit.states.GameStateManager;
-import com.davebilotta.whatzit.states.MenuState;
-import com.davebilotta.whatzit.states.PlayState;
+import com.davebilotta.whatzit.states.MainMenuState;
 
 public class WhatzIt extends ApplicationAdapter {
 	private SpriteBatch batch;
@@ -37,7 +36,7 @@ public class WhatzIt extends ApplicationAdapter {
 		
 		Gdx.gl.glClearColor(0, 0, 0, 0);	
 		
-		gsm.push(new MenuState(this,gsm));
+		gsm.push(new MainMenuState(this,gsm));
 	}
 
 	@Override
