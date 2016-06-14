@@ -98,9 +98,12 @@ public class QuestionOverState extends State {
 		// Continue button
 		table.row();
 		HorizontalGroup row = new HorizontalGroup();
-		TextButton continueButton = new TextButton("Continue", this.skin);
-		continueButton.addListener(new UIClickListener("continue"));
-		continueButton.setName("nextQuestion");
+
+
+		TextButton continueButton = addButton("Continue");
+        //new TextButton("Continue", this.skin);
+		//continueButton.addListener(new UIClickListener("continue"));
+		//continueButton.setName("nextQuestion");
 		continueButton.center();
 		
 		//table.align(Align.center);
@@ -116,7 +119,17 @@ public class QuestionOverState extends State {
 		//stage.addActor(bkg);
 	}
 
-	@Override
+    // TODO: Move to ImageManager class
+    public TextButton addButton(String name) {
+        TextButton button = new TextButton(name,this.game.im.getUIButtonStyle());
+        button.addListener(new UIClickListener(name.toLowerCase()));
+
+        return button;
+    }
+
+
+
+    @Override
 	public void render(SpriteBatch sb) {
 		stage.draw();
 	}

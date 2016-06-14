@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -93,6 +94,7 @@ public class PlayState extends State {
 	public PlayState(WhatzIt game, GameStateManager gsm, int mode,
 			int difficulty, String[] playerNames) {
 		super(game, gsm);
+        Utils.log("DIFF" + difficulty);
 
 		createBasicSkin();
 		
@@ -120,22 +122,22 @@ public class PlayState extends State {
 		int ts;
         float del;
 		switch (difficulty) {
-		case 1:
+		case 0:
 			this.difficulty = DIFF.EASY;
-			ts = 128; del = 7;
+			ts = 128; del = 5;
+			break;
+
+		case 1:
+			this.difficulty = DIFF.MEDIUM;
+			ts = 64; del = 4;
 			break;
 
 		case 2:
-			this.difficulty = DIFF.MEDIUM;
-			ts = 64; del = 5;
-			break;
-
-		case 3:
 			this.difficulty = DIFF.HARD;
 			ts = 32; del = 3;
 			break;
 
-		case 4:
+		case 3:
 			this.difficulty = DIFF.INSANE;
 			ts = 16; del = 2;
 			break;
@@ -157,10 +159,7 @@ public class PlayState extends State {
 		// renderPlayerInfo(sb,true);
 
 		for (int i = 0; i < numPlayers; i++) {
-			// playerNames[i] = "Player " + (i+1);
-			//players[i] = new Player(i, "Player " + (i + 1));
             players[i] = new Player(i, this.playerNames[i]);
-
 		}
 		// TODO: Eventually replace this when there are more than 4 questions available
 		numQuestions = 4;
@@ -326,21 +325,8 @@ public class PlayState extends State {
 	}
 
 	public void renderUI(SpriteBatch sb) {
-
-        // render players
 		renderPlayerInfo(sb);
-
-		// render time
-
-		float time = this.delay - this.tick;
-		int t = (int) Math.ceil((double) time);
-		//// TODO: Need to fix these
-		// float timeWidth = this.game.im.timeFont.getBounds(t + "").width;
-        String timeString = Integer.toString(t);
-        layout.setText(this.game.im.timeFont, timeString);
-        float timeWidth = layout.width + right;
-		this.game.im.timeFont.draw(sb, timeString, this.game.WIDTH - timeWidth,
-				this.game.HEIGHT - yOffset);
+        renderTime(sb);
 	}
 
     public void renderPlayerInfo(SpriteBatch sb) {
@@ -385,6 +371,25 @@ public class PlayState extends State {
             left += (nameWidth + scoreWidth + scoreSpacer + p_w);
         }
     }
+
+    public void renderTime(SpriteBatch sb) {
+
+        float time = this.delay - this.tick;
+        int t = (int) Math.ceil((double) time);
+        String timeString;
+        boolean wholeNumberTimeFormat = true;
+        if (wholeNumberTimeFormat) {
+            timeString = Integer.toString(t);
+        }
+        else {
+            timeString = String.format("%1.1f", (double) time);
+        }
+        layout.setText(this.game.im.timeFont, timeString);
+        float timeWidth = layout.width + right;
+        this.game.im.timeFont.draw(sb, timeString, this.game.WIDTH - timeWidth,
+                this.game.HEIGHT - yOffset);
+    }
+
     public void renderUINew(SpriteBatch sb) {
 
 		Table table = new Table();

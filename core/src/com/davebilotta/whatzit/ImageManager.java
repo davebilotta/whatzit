@@ -7,10 +7,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class ImageManager {
 
@@ -25,24 +28,31 @@ public class ImageManager {
 	private Texture questionOver;
 	private Texture gameOver;
 	
-	private Texture cancelButton,okButton,uiButton,uiButtonLarge,backButton;
-	
+	private Texture cancelButton,okButton,uiButton,uiButtonLarge,backButton, uiButtonLargeUp, uiButtonLargeDown;
+
+    private TextButton.TextButtonStyle uiButtonStyle;
+
 	private ArrayList<Texture> images;
 
 	public ImageManager(WhatzIt game) {
 		this.game = game;
 		this.images = new ArrayList<Texture>();
-		
-		loadFonts();
-		loadTileImages();
-		loadMisc();
+
+
+		buildFonts();
+		buildTileImages();
+		buildMisc();
+
+        buildSkin();
 
 	}
-
-	private void loadFonts() {
+	private void buildFonts() {
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
-				//Gdx.files.internal("ui/future-webfont.ttf"));
-				Gdx.files.internal("ui/AlfaSlabOne-Regular.ttf"));
+                // BowlbyOneSC-Regular is good
+                // OverlockSC-Regular is good, but needs to be bigger
+                // RubikMonoOne-Reguar isn't bad
+                Gdx.files.internal("fonts/BowlbyOneSC-Regular.ttf"));
+				//Gdx.files.internal("fonts/AlfaSlabOne-Regular.ttf"));
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 		parameter.size = 24;
 		parameter.characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.!'()>?:-";
@@ -75,7 +85,7 @@ public class ImageManager {
 
 	}
 
-	private void loadTileImages() {
+	private void buildTileImages() {
 		this.tileEASY =  addImage("tiles/tile.128.jpg");
 		this.tileMEDIUM =  addImage("tiles/tile.64.jpg");;
 		this.tileHARD =  addImage("tiles/tile.32.jpg");
@@ -113,7 +123,7 @@ public class ImageManager {
 		return temp;
 	}
 
-	private void loadMisc() {
+	private void buildMisc() {
 		// this.medal = new Texture(Gdx.files.internal("flat_medal8.png"));
 		this.medal = addImage("flatshadow_medal8.png");
 		
@@ -122,18 +132,32 @@ public class ImageManager {
 		this.p3 = addImage("pieceBlue_border01.png");
 		this.p4 = addImage("piecePurple_border00.png");
 		this.button = addImage("button.png");
-		this.bkg = addImage("bkg/bkg_blue.png");
-				
+        this.bkg = addImage("bkg/land_sand12.png");
+
 		this.questionOver = addImage("question_over.png");
 		this.gameOver = addImage("game_over.png");
 		
 		this.uiButton = addImage("ui/yellow_button10.png");
-		this.uiButtonLarge = addImage("ui/yellow_button03.png");
+		//this.uiButtonLarge = addImage("ui/yellow_button03.png");
+
+        this.uiButtonLarge = addImage("ui/yellow_button03.png");
+
+        // TODO: Figure out the right down style to use
+        this.uiButtonLargeUp = addImage("ui/red_button01.png");
+        this.uiButtonLargeDown = addImage("ui/red_button00.png");
 
         this.cancelButton = addImage("ui/red_boxCross.png");
 		this.okButton = addImage("ui/green_boxCheckmark.png");
 		this.backButton = addImage("ui/yellow_sliderLeft.png");
 	}
+
+
+    private void buildSkin() {
+        this.uiButtonStyle = new TextButton.TextButtonStyle();
+        this.uiButtonStyle.up = new TextureRegionDrawable(new TextureRegion(uiButtonLargeUp));
+        this.uiButtonStyle.down = new TextureRegionDrawable(new TextureRegion(uiButtonLargeDown));
+        this.uiButtonStyle.font = this.nameFont;
+    }
 
 	public void dispose() {
 		// TODO: need to dispose of all assets
@@ -206,6 +230,8 @@ public class ImageManager {
 	}
 
     public Texture getUIButtonLarge() { return this.uiButtonLarge; }
+
+    public TextButton.TextButtonStyle getUIButtonStyle() { return this.uiButtonStyle;  }
 	
 	public Texture getCancelButton() { 
 		return this.cancelButton;

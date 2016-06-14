@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.davebilotta.whatzit.states.GameStateManager;
 import com.davebilotta.whatzit.states.MainMenuState;
+import com.davebilotta.whatzit.states.MainMenuState2;
 
 public class WhatzIt extends ApplicationAdapter {
 	private SpriteBatch batch;
@@ -18,7 +19,7 @@ public class WhatzIt extends ApplicationAdapter {
     public int HEIGHT = 768;
     private float ASPECT_RATIO;
    
-    public static final String TITLE = "WhatzIt?";
+    public static final String TITLE = "Reveal";
 	
 	@Override
 	public void create () {
@@ -35,8 +36,8 @@ public class WhatzIt extends ApplicationAdapter {
 		this.ASPECT_RATIO = (float)WIDTH/(float)HEIGHT;
 		
 		Gdx.gl.glClearColor(0, 0, 0, 0);	
-		
-		gsm.push(new MainMenuState(this,gsm));
+
+        gsm.push(new MainMenuState(this,gsm));
 	}
 
 	@Override

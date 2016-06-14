@@ -144,11 +144,6 @@ public class InputState extends State {
         TextureRegionDrawable drawBackUp = new TextureRegionDrawable(backUp);
         TextureRegionDrawable drawBackDown = new TextureRegionDrawable(backDown);
 
-        // Cancel button
-
-
-        // Ok Button
-
         TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
         TextButton.TextButtonStyle styleLarge = new TextButton.TextButtonStyle();
         TextButton.TextButtonStyle styleBack = new TextButton.TextButtonStyle();

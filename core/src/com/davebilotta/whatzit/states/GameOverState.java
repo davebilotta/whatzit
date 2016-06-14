@@ -158,7 +158,7 @@ public class GameOverState extends State {
 		stage.dispose();
 		//this.gsm.set(previousState);
 		previousState.waiting = false;
-		this.gsm.set(new MainMenuState(this.game,gsm));
+		this.gsm.set(new MainMenuState2(this.game,gsm));
 	}
 
 	public class UIClickListener extends ClickListener {
