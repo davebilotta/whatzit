@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 //import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -22,6 +24,9 @@ import com.davebilotta.whatzit.WhatzIt;
 public class GameOverState extends State {
 	private Skin skin;
 	private Stage stage;
+
+    Label.LabelStyle uiFontStyle;
+    Label.LabelStyle messageStyle;
 
 	private PlayState previousState;
 
@@ -35,6 +40,7 @@ public class GameOverState extends State {
 			@Override
 			public int compare(Player p1, Player p2) {
 				return Integer.compare(p2.getScore(), p1.getScore());
+
 			}
 		};
 	}
@@ -58,6 +64,15 @@ public class GameOverState extends State {
 		
 		this.skin = new Skin(Gdx.files.internal("uiskin.json"),
 				new TextureAtlas("uiskin.atlas"));
+
+        uiFontStyle = new Label.LabelStyle();
+        uiFontStyle.font = this.game.im.uiFont;
+        uiFontStyle.fontColor = Color.BLUE;
+
+        messageStyle = new Label.LabelStyle();
+        messageStyle.font = this.game.im.messageFont;
+        messageStyle.fontColor = Color.WHITE;
+
 		setStage();
 	}
 
@@ -72,6 +87,11 @@ public class GameOverState extends State {
     }
 
     public void setStage() {
+        boolean singlePlayerMode;
+
+        if (winners.length > 1) singlePlayerMode = false;
+        else singlePlayerMode = true;
+
 		Image bkg = new Image(this.game.im.getBkg());
 		bkg.setSize(this.game.WIDTH, this.game.HEIGHT);
 		stage.addActor(bkg);
@@ -80,19 +100,13 @@ public class GameOverState extends State {
 		table.setFillParent(true);
 
 		table.row();
-		//table.add("GAME OVER!");
-		table.add(new Image(this.game.im.getGameOverImg()));
-		table.add(" ");
-		
-		boolean singlePlayerMode;
-		
-		if (winners.length > 1) singlePlayerMode = false;
-		else singlePlayerMode = true;
-				
+		//table.add(new Image(this.game.im.getGameOverImg()));
+        table.add(addLabel("GAME OVER!",uiFontStyle));
+
 		// Winner name
 		table.row();
 		if (singlePlayerMode) {
-			table.add("Points: " + winners[0].getScore());
+			table.add(addLabel("Points: " + winners[0].getScore()));
 		} else {
 			// Determine if we have a winner 
 			
@@ -106,16 +120,15 @@ public class GameOverState extends State {
 			//
 			int start = 0;
 			if (hasWinner) {
-				table.add("Winner: " + winners[0].getName());
+				table.add(addLabel("Winner: " + winners[0].getName()));
 				
-				table.row();
-				table.add(winners[0].getScore() + " points");
+				table.row().padBottom(40f);
+				table.add(addLabel(winners[0].getScore() + " points"));
 				
 				start = 1;
 			}
 
-			table.row(); 
-			table.add(" ");
+			table.row();
 			
 			for (int i = start; i < winners.length; i++) {
 				table.row();
@@ -125,29 +138,42 @@ public class GameOverState extends State {
 				else { pt = "points"; 
 				}
 				
-				table.add(winners[i].getName() + ": "
-						+ winners[i].getScore() + " " + pt);
+				table.add(addLabel(winners[i].getName() + ": "
+						+ winners[i].getScore() + " " + pt));
 			}
 
 		}
 		// Continue button
-		table.row();
-		table.add(" ");
-		
+
 		table.row();
 		HorizontalGroup row = new HorizontalGroup();
-		TextButton continueButton = new TextButton("Continue", this.skin);
-		continueButton.addListener(new UIClickListener("continue"));
-		continueButton.setName("nextQuestion");
-		continueButton.center();
+        TextButton continueButton = addButton("Continue");
+        continueButton.center();
+        table.addActor(continueButton);
 
 		row.addActor(continueButton);
-		row.align(Align.center);
-		table.add(row);
+        row.align(Align.center);
+        table.add(row).bottom().expand().padBottom(20f);
 
 		// table.pad(10f);
 		stage.addActor(table);
 	}
+
+    public TextButton addButton(String name) {
+        TextButton button = new TextButton(name, this.game.im.getUIButtonStyle());
+
+        button.addListener(new UIClickListener(name.toLowerCase()));
+
+        return button;
+    }
+
+    public Label addLabel(String text) {
+        return new Label(text,messageStyle);
+    }
+
+    public Label addLabel(String text, Label.LabelStyle style) {
+        return new Label(text,style);
+    }
 
 	@Override
 	public void render(SpriteBatch sb) {
@@ -158,7 +184,7 @@ public class GameOverState extends State {
 		stage.dispose();
 		//this.gsm.set(previousState);
 		previousState.waiting = false;
-		this.gsm.set(new MainMenuState2(this.game,gsm));
+		this.gsm.set(new MainMenuState(this.game,gsm));
 	}
 
 	public class UIClickListener extends ClickListener {

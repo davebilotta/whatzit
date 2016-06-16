@@ -254,7 +254,7 @@ public class PlayState extends State {
 
 					players[p].correct(score);
 					this.gsm.push(new QuestionOverState(this.game, this.gsm,
-							this, players[p], score));
+							this, players[p], score, this.game.qm.getQuestionImage()));
 
 					if (!this.game.qm.hasQuestions()) {
 						gameover = true;
@@ -428,7 +428,7 @@ public class PlayState extends State {
 
                 questionover = true;
                 this.gsm.push(new QuestionOverState(this.game, this.gsm, this,
-                        player, score));
+                        player, score, this.game.qm.getQuestionImage()));
 
             } else {
                 player.incorrect(this.game.tm.getTileValue());

@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
@@ -20,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -29,18 +31,27 @@ import com.davebilotta.whatzit.WhatzIt;
 public class QuestionOverState extends State {
 
 	private PlayState previousState;
+    private WhatzIt game;
 	private Player winner;
 	private int score;
     private float rowSpacing = 30f;
 	private Skin skin;
 	private Stage stage;
 
-    TextField.TextFieldStyle uiFontStyle;
+   Label.LabelStyle uiFontStyle;
+    Label.LabelStyle messageStyle;
+
+    public class myActor extends Actor {
+        public myActor() {
+
+        }
+    }
 
 	public QuestionOverState(WhatzIt game, GameStateManager gsm, PlayState st,
-			Player winner, int score) {
+			Player winner, int score, Texture image) {
 		super(game, gsm);
-		this.previousState = st;
+		this.game = game;
+        this.previousState = st;
 		this.winner = winner;
 		this.score = score;
 
@@ -49,13 +60,18 @@ public class QuestionOverState extends State {
 
 		Gdx.input.setInputProcessor(stage);
 
+        // TODO - use generic ImageManager skin
 		this.skin = new Skin(Gdx.files.internal("uiskin.json"), new TextureAtlas("uiskin.atlas"));
 
-        uiFontStyle = new TextField.TextFieldStyle();
+        uiFontStyle = new Label.LabelStyle();
         uiFontStyle.font = this.game.im.uiFont;
-        uiFontStyle.fontColor = Color.MAROON;
+        uiFontStyle.fontColor = Color.BLUE;
 
-		setStage();
+        messageStyle = new Label.LabelStyle();
+        messageStyle.font = this.game.im.messageFont;
+        messageStyle.fontColor = Color.WHITE;
+
+        setStage(image);
 	}
 
 	@Override
@@ -63,71 +79,79 @@ public class QuestionOverState extends State {
 		handleInput();
 	}
 
-	public void setStage() {
-		Image bkg = new Image(this.game.im.getBkg());
-		bkg.setSize(this.game.WIDTH, this.game.HEIGHT);
+	public void setStage(Texture image) {
+		//
+        Image bkg = new Image(image);
+        // TODO: Set the alpha for this
+        Color bkgColor = bkg.getColor();
+        bkg.setColor(bkgColor.r,bkgColor.g,bkgColor.b,0.4f);
+
+        bkg.setSize(this.game.WIDTH, this.game.HEIGHT);
 		stage.addActor(bkg);
 		
 		Table table = new Table(skin);
 		table.setFillParent(true);
-        table.setDebug(true);
+        //table.setDebug(true);
+        table.center();
 
-       String winnerName, winnerScore;
-
-		table.row().padBottom(rowSpacing).expandX().align(Align.center);
-	    table.add(new TextField("Question Over",uiFontStyle)).fillX();
-
-		// Winner name
-		table.row();
-		if (this.winner == null) {
-			winnerName = "Winner: None";
-			winnerScore = "Points: None";
-		} else {
-			winnerName = "Winner: " + this.winner.getName();
-			winnerScore = "Points: " + this.score;
-		}
-		table.add(winnerName);
-
-		// # of points
-		table.row();
-		table.add(winnerScore);
+        String winnerName, winnerScore;
 
 		table.row();
-		table.add(" ");
-		
+
+        String topText = "";
+        if (this.winner == null) {
+            topText = "Question Over";
+            winnerName = "Winner: None";
+            winnerScore = "Points: 0";
+        }
+        else {
+            topText = "Correct!";
+            winnerName = "Winner: " + this.winner.getName();
+            winnerScore = "Points: " + this.score;
+        }
+
+        // Top text
+        table.row();
+        table.add(addLabel(topText,uiFontStyle));
+
+        // Winner name
+        table.row();
+        table.add(addLabel(winnerName));
+
+		// Number of points
+		table.row();
+        table.add(addLabel(winnerScore));
+
 		// Continue button
 		table.row();
 		HorizontalGroup row = new HorizontalGroup();
 
-
-		TextButton continueButton = addButton("Continue");
-        //new TextButton("Continue", this.skin);
-		//continueButton.addListener(new UIClickListener("continue"));
-		//continueButton.setName("nextQuestion");
+		TextButton continueButton = addButton("Next Question");
 		continueButton.center();
-		
-		//table.align(Align.center);
-		//table.addActor(continueButton);
-		row.addActor(continueButton);
+        row.addActor(continueButton);
 		row.align(Align.center);
-		table.add(row);
+        table.add(row).bottom().expand().padBottom(20f);
 
-		//table.pad(10f);
-		stage.addActor(table);
+        stage.addActor(table);
 		
-		//Image bkg = new Image(this.game.im.getBkg());
-		//stage.addActor(bkg);
 	}
 
     // TODO: Move to ImageManager class
     public TextButton addButton(String name) {
-        TextButton button = new TextButton(name,this.game.im.getUIButtonStyle());
+        TextButton button = new TextButton(name, this.game.im.getUIButtonStyle());
+
         button.addListener(new UIClickListener(name.toLowerCase()));
 
         return button;
     }
 
+    public Label addLabel(String text) {
+        return new Label(text,messageStyle);
+    }
 
+    public Label addLabel(String text, Label.LabelStyle style) {
+        return new Label(text,style);
+    }
 
     @Override
 	public void render(SpriteBatch sb) {
@@ -138,35 +162,6 @@ public class QuestionOverState extends State {
 		stage.dispose();
 		this.gsm.set(previousState);
 		previousState.waiting = false;
-	}
-
-	// @Override
-	public void render2(SpriteBatch sb) {
-		sb.begin();
-
-		String upperText = "QUESTION OVER";
-
-		drawCenteredText(sb, upperText, this.game.HEIGHT, false);
-
-		String winnerName;
-		String winnerScore;
-
-		if (this.winner == null) {
-			winnerName = "Winner: None";
-			winnerScore = "Points: None";
-		} else {
-			winnerName = "Winner: " + this.winner.getName();
-			// winnerScore = "Points: " + this.winner.getScore();
-			winnerScore = "Points: " + this.score;
-		}
-
-		drawCenteredText(sb, winnerName, this.game.HEIGHT / 2, true);
-		drawCenteredText(sb, winnerScore, this.game.HEIGHT / 2 - 100, false);
-
-		drawCenteredImage(sb, this.game.im.getButton(),
-				this.game.HEIGHT / 2 - 200);
-
-		sb.end();
 	}
 
 	public void drawCenteredText(SpriteBatch sb, String text, int y,
@@ -213,7 +208,7 @@ public class QuestionOverState extends State {
 			
 			super.clicked(event, x, y);
 
-			if (this.buttonName.equals("continue")) {
+			if (this.buttonName.equals("next question")) {
 				continueButtonOnClick();
 				
 			}

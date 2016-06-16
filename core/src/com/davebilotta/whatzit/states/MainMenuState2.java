@@ -145,15 +145,22 @@ public class MainMenuState2 extends State {
 
     }
 
-    public TextButton addButton(String name, ButtonGroup buttonGroup) {
-    	TextButton button = addButton(name);
+    public TextButton addButton(String name, ButtonGroup buttonGroup, boolean navStyle) {
+    	TextButton button = addButton(name,navStyle);
     	buttonGroup.add(button);
 
     	return button;
     }
     
-    public TextButton addButton(String name) {
-    	TextButton button = new TextButton(name,this.game.im.getUIButtonStyle());
+    public TextButton addButton(String name, boolean navStyle) {
+    	TextButton button;
+
+        if (!navStyle) {
+            button = new TextButton(name, this.game.im.getUIButtonStyle2());
+        }
+        else {
+            button = new TextButton(name, this.game.im.getUIButtonStyle());
+        }
     	button.addListener(new UIClickListener(name.toLowerCase()));
     	
     	return button;
@@ -196,9 +203,9 @@ public class MainMenuState2 extends State {
 
         table.row().align(Align.left);
 		ButtonGroup row1_buttonGroup = new ButtonGroup();
-		row1.addActor(addButton("Normal", row1_buttonGroup));
-		row1.addActor(addButton("Macro",row1_buttonGroup));
-		row1.addActor(addButton("Mixed", row1_buttonGroup));
+		row1.addActor(addButton("Normal", row1_buttonGroup,false));
+		row1.addActor(addButton("Macro",row1_buttonGroup,false));
+		row1.addActor(addButton("Mixed", row1_buttonGroup,false));
 		row1_buttonGroup.setMaxCheckCount(1);
 		row1_buttonGroup.uncheckAll();
         row1.space(getButtonSpacing());
@@ -226,10 +233,10 @@ public class MainMenuState2 extends State {
 		table.row().align(Align.left);
 		ButtonGroup row2_buttonGroup = new ButtonGroup();
 		row2_buttonGroup.setMaxCheckCount(1);
-        row2.addActor(addButton("Easy", row2_buttonGroup));
-		row2.addActor(addButton("Medium",row2_buttonGroup));
-		row2.addActor(addButton("Hard", row2_buttonGroup));
-		row2.addActor(addButton("Insane", row2_buttonGroup));
+        row2.addActor(addButton("Easy", row2_buttonGroup,false));
+		row2.addActor(addButton("Medium",row2_buttonGroup,false));
+		row2.addActor(addButton("Hard", row2_buttonGroup,false));
+		row2.addActor(addButton("Insane", row2_buttonGroup,false));
 		row2_buttonGroup.uncheckAll();
 
 		row2.sizeBy(0.5f);
@@ -257,10 +264,10 @@ public class MainMenuState2 extends State {
 		table.row();
 		ButtonGroup row3_buttonGroup = new ButtonGroup();
 		row3_buttonGroup.setMaxCheckCount(1);
-		row3.addActor(addButton("One",row3_buttonGroup));
-		row3.addActor(addButton("Two",row3_buttonGroup));
-		row3.addActor(addButton("Three", row3_buttonGroup));
-        row3.addActor(addButton("Four", row3_buttonGroup));
+		row3.addActor(addButton("One",row3_buttonGroup,false));
+		row3.addActor(addButton("Two",row3_buttonGroup,false));
+		row3.addActor(addButton("Three", row3_buttonGroup,false));
+        row3.addActor(addButton("Four", row3_buttonGroup,false));
 		row3_buttonGroup.uncheckAll();
 
         row3.align(Align.left);
@@ -293,8 +300,8 @@ public class MainMenuState2 extends State {
 		// Play row
         //
         table.row().padTop(getRowSpacing());
-        playRow.addActor(addButton("Back"));
-		playRow.addActor(addButton("Next"));
+        playRow.addActor(addButton("Back",true));
+		playRow.addActor(addButton("Next",true));
         playRow.align(Align.bottom).pad(20f);
 
        // playRow.setHeight(table.getHeight() * 0.30f);

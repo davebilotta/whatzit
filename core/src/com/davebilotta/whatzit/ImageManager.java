@@ -18,7 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 public class ImageManager {
 
 	private WhatzIt game;
-	public BitmapFont nameFont, scoreFont, timeFont, uiFont;
+	public BitmapFont nameFont, scoreFont, timeFont, uiFont, messageFont;
     public TextField.TextFieldStyle uiFontStyle;
 	private Texture tileEASY, tileMEDIUM, tileHARD, tileINSANE;
 	private Texture medal;
@@ -29,10 +29,13 @@ public class ImageManager {
 	private Texture gameOver;
 	
 	private Texture cancelButton,okButton,uiButton,uiButtonLarge,backButton, uiButtonLargeUp, uiButtonLargeDown;
-
     private TextButton.TextButtonStyle uiButtonStyle;
 
-	private ArrayList<Texture> images;
+    private Texture uiButtonLargeUp2, uiButtonLargeDown2;
+    private TextButton.TextButtonStyle uiButtonStyle2;
+    private TextField.TextFieldStyle messageButtonStyle;
+
+    private ArrayList<Texture> images;
 
 	public ImageManager(WhatzIt game) {
 		this.game = game;
@@ -66,8 +69,12 @@ public class ImageManager {
 		parameterLarge.characters = parameter.characters;
 
         FreeTypeFontParameter uiParameter = new FreeTypeFontParameter();
-        uiParameter.size = 60;
+        uiParameter.size = 70;
         uiParameter.characters = parameter.characters;
+
+        FreeTypeFontParameter messageParameter = new FreeTypeFontParameter();
+        messageParameter.size = 24;
+        messageParameter.characters = parameter.characters;
 
 		this.nameFont = generator.generateFont(parameterSmall);
 		this.nameFont.setColor(Color.BLUE);
@@ -80,6 +87,9 @@ public class ImageManager {
 
         this.uiFont = generator.generateFont(uiParameter);
         this.uiFont.setColor(Color.MAROON);
+
+        this.messageFont = generator.generateFont(messageParameter);
+        this.messageFont.setColor(Color.WHITE);
 
 		generator.dispose();
 
@@ -146,17 +156,26 @@ public class ImageManager {
         this.uiButtonLargeUp = addImage("ui/red_button01.png");
         this.uiButtonLargeDown = addImage("ui/red_button00.png");
 
+        this.uiButtonLargeUp2 = addImage("ui/blue_button01.png");
+        this.uiButtonLargeDown2 = addImage("ui/blue_button00.png");
+
         this.cancelButton = addImage("ui/red_boxCross.png");
 		this.okButton = addImage("ui/green_boxCheckmark.png");
 		this.backButton = addImage("ui/yellow_sliderLeft.png");
 	}
-
-
     private void buildSkin() {
         this.uiButtonStyle = new TextButton.TextButtonStyle();
         this.uiButtonStyle.up = new TextureRegionDrawable(new TextureRegion(uiButtonLargeUp));
         this.uiButtonStyle.down = new TextureRegionDrawable(new TextureRegion(uiButtonLargeDown));
         this.uiButtonStyle.font = this.nameFont;
+
+        this.uiButtonStyle2 = new TextButton.TextButtonStyle();
+        this.uiButtonStyle2.up = new TextureRegionDrawable(new TextureRegion(uiButtonLargeUp2));
+        this.uiButtonStyle2.down = new TextureRegionDrawable(new TextureRegion(uiButtonLargeDown2));
+        this.uiButtonStyle2.font = this.nameFont;
+
+        this.messageButtonStyle = new TextField.TextFieldStyle();
+        this.messageButtonStyle.font = this.messageFont;
     }
 
 	public void dispose() {
@@ -232,8 +251,15 @@ public class ImageManager {
     public Texture getUIButtonLarge() { return this.uiButtonLarge; }
 
     public TextButton.TextButtonStyle getUIButtonStyle() { return this.uiButtonStyle;  }
-	
-	public Texture getCancelButton() { 
+
+    public TextButton.TextButtonStyle getUIButtonStyle2() { return this.uiButtonStyle2;  }
+
+    public TextField.TextFieldStyle getMessageButtonStyle() {
+        Utils.log("style: " + this.messageButtonStyle);
+
+        return this.messageButtonStyle;  }
+
+    public Texture getCancelButton() {
 		return this.cancelButton;
 	}
 	

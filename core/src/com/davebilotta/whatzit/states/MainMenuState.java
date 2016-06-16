@@ -57,7 +57,6 @@ public class MainMenuState extends State {
             bkg.setSize(this.game.WIDTH, this.game.HEIGHT);
             stage.addActor(bkg);
 
-
             Table table = new Table();
             table.setFillParent(true);
 
@@ -200,6 +199,8 @@ public class MainMenuState extends State {
             }
             else if (this.button.equals("about")) {
                 Utils.log("about");
+                // TODO: This is just for testing - an easy way to get to the QuestionOver state quickly
+                gsm.push(new QuestionOverState(gameID, gameStateManagerID, null, null, 100, gameID.im.getPlayerImage(0)));
             }
         }
     }
