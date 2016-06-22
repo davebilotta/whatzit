@@ -164,7 +164,7 @@ public class QuestionOverState extends State {
 		previousState.waiting = false;
 	}
 
-	public void drawCenteredText(SpriteBatch sb, String text, int y,
+/*	public void drawCenteredText(SpriteBatch sb, String text, int y,
 			boolean drawMedal) {
 
 		// TODO: Need to fix these
@@ -183,7 +183,7 @@ public class QuestionOverState extends State {
 					this.game.im.getMedal().getWidth(), this.game.im.getMedal()
 							.getHeight());
 		}
-	}
+	} */
 
 	public void drawCenteredImage(SpriteBatch sb, Texture img, int y) {
 
@@ -220,32 +220,6 @@ public class QuestionOverState extends State {
 	public void handleInput() {
 		stage.act();
 	}
-
-	/* 
-	 * 	private void createBasicSkin() {
-		// Create a font
-		BitmapFont font = new BitmapFont();
-		skin = new Skin();
-		skin.add("default", font);
-
-		// Create a texture
-		// Generate a 1x1 white texture and store it in the skin named "white".
-		Pixmap pixmap = new Pixmap(140, 60, Pixmap.Format.RGBA8888);
-		pixmap.setColor(Color.WHITE);
-		pixmap.fill();
-		skin.add("background", new Texture(pixmap));
-
-		// Create a button style
-		TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-		textButtonStyle.up = skin.newDrawable("background", Color.ORANGE);
-		textButtonStyle.down = skin.newDrawable("background", Color.NAVY);
-		textButtonStyle.checked = skin.newDrawable("background", Color.NAVY);
-		textButtonStyle.over = skin.newDrawable("background", Color.WHITE);
-		textButtonStyle.font = skin.getFont("default");
-
-		skin.add("default", textButtonStyle);
-	
-	} */
 
     @Override
     public void notifyResponse(Player player, String response) {

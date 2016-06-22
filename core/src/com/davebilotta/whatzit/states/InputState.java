@@ -1,6 +1,7 @@
 package com.davebilotta.whatzit.states;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -33,15 +35,20 @@ public class InputState extends State {
 	private boolean exit;
     private String topText;
 	private Player player;
+    private TextButton.TextButtonStyle styleLarge, styleBack, style;
+    private Label.LabelStyle messageStyle;
 
-	public InputState(WhatzIt game, GameStateManager gsm, State st, Player player, String text) {
+//    private ImageButton.ImageButtonStyle styleCancel, styleOK;
+private TextButton.TextButtonStyle styleCancel, styleOK;
+
+	public InputState(WhatzIt game, GameStateManager gsm, State st, Player player, String text, String initialText) {
 		super(game, gsm);
 
         this.topText = text;
 		exit = false;
 		
 		this.previousState = st;
-		this.text = "";
+		this.text = initialText;
 		this.player = player;
 		
 		this.stage = new Stage(new ScreenViewport());
@@ -50,8 +57,66 @@ public class InputState extends State {
 
 		this.skin = new Skin(Gdx.files.internal("uiskin.json"),
 				new TextureAtlas("uiskin.atlas"));
+
+        Label.LabelStyle labelStyle =  new Label.LabelStyle();
+        labelStyle.font = this.game.im.messageFont;
+        labelStyle.fontColor = Color.WHITE;
+
+        skin.add("default", labelStyle);
+
+        buildStyles();
 		setStage();
 	}
+
+    public void buildStyles() {
+        // TODO: Move all of these to ImageManager?
+        // Normal size
+        TextureRegion regionUp = new TextureRegion(this.game.im.getUIButton());
+        TextureRegionDrawable drawUp = new TextureRegionDrawable(regionUp);
+        TextureRegion regionDown = new TextureRegion(this.game.im.getUIButton());
+        TextureRegionDrawable drawDown = new TextureRegionDrawable(regionDown);
+
+        // Large size
+        TextureRegion regionUpLarge = new TextureRegion(this.game.im.getUIButtonLarge());
+        TextureRegionDrawable drawUpLarge = new TextureRegionDrawable(regionUpLarge);
+        TextureRegion regionDownLarge = new TextureRegion(this.game.im.getUIButtonLarge());
+        TextureRegionDrawable drawDownLarge = new TextureRegionDrawable(regionDownLarge);
+
+        // Back button
+        TextureRegion backUp = new TextureRegion(this.game.im.getBackButton());
+        TextureRegion backDown = new TextureRegion(this.game.im.getBackButton());
+        TextureRegionDrawable drawBackUp = new TextureRegionDrawable(backUp);
+        TextureRegionDrawable drawBackDown = new TextureRegionDrawable(backDown);
+
+        style = new TextButton.TextButtonStyle();
+        styleLarge = new TextButton.TextButtonStyle();
+        styleBack = new TextButton.TextButtonStyle();
+        style.up = drawUp;
+        style.down = drawDown;
+        style.font = this.game.im.nameFont;
+
+        styleLarge.up = drawUpLarge;
+        styleLarge.down = drawDownLarge;
+        styleLarge.font = this.game.im.nameFont;
+
+        styleBack.up = drawBackUp;
+        styleBack.down = drawBackDown;
+        styleBack.font = this.game.im.nameFont;
+
+        styleCancel = new TextButton.TextButtonStyle();
+        styleCancel.up = new TextureRegionDrawable(new TextureRegion(this.game.im.getCancelButton(true)));
+        styleCancel.down = new TextureRegionDrawable(new TextureRegion(this.game.im.getCancelButton(false)));
+        styleCancel.font = this.game.im.nameFont;
+
+        styleOK = new TextButton.TextButtonStyle();
+        styleOK.up = new TextureRegionDrawable(new TextureRegion(this.game.im.getOKButton(true)));
+        styleOK.down = new TextureRegionDrawable(new TextureRegion(this.game.im.getOKButton(false)));
+        styleOK.font = this.game.im.nameFont;
+
+        messageStyle = new Label.LabelStyle();
+        messageStyle.font = this.game.im.messageFont;
+        messageStyle.fontColor = Color.NAVY;
+    }
 
 	public void setStage() {
 		Image bkg = new Image(this.game.im.getBkg());
@@ -70,27 +135,27 @@ public class InputState extends State {
 		table.add(topText);
 
 		table.row();
-		answerLabel = new Label("", skin);
-		//answerLabel.setText("");
+		answerLabel = new Label("",messageStyle);
+
 		table.add(answerLabel);
 
 		table.row();
 		table.add(" ");
 		
 		String[] row1 = { "q","w","e","r","t","y","u","i","o","p"};
-		createRow(table, row1);
+		createKeyboardRow(table, row1);
 
-		String[] row2 = { "a","s","d","f","g","h","j","k","l"};
-		createRow(table, row2);
+		String[] row2 = { "a","s","d","f","g","h","j","k","l","back"};
+		createKeyboardRow(table, row2);
 
-		String[] row3 = { "z","x","c","v","space","b","n","m","back"};
-		createRow(table, row3);
+		String[] row3 = { "z","x","c","v","space","b","n","m"};
+		createKeyboardRow(table, row3);
 
         table.row();
         table.add("");
 
 		String[] row4 = {"cancel","continue"};
-		createRow(table,row4);
+		createKeyboardRow(table,row4);
 		
 		stage.addActor(table);
 		
@@ -122,50 +187,8 @@ public class InputState extends State {
         });
 	}
 
-	private void createRow(Table table, String[] layout) {
+	private void createKeyboardRow(Table table, String[] layout) {
 		table.row();
-
-        // TODO: Move all of these to ImageManager?
-        // Normal size
-		TextureRegion regionUp = new TextureRegion(this.game.im.getUIButton());
-		TextureRegionDrawable drawUp = new TextureRegionDrawable(regionUp);
-        TextureRegion regionDown = new TextureRegion(this.game.im.getUIButton());
-        TextureRegionDrawable drawDown = new TextureRegionDrawable(regionDown);
-
-        // Large size
-        TextureRegion regionUpLarge = new TextureRegion(this.game.im.getUIButtonLarge());
-        TextureRegionDrawable drawUpLarge = new TextureRegionDrawable(regionUpLarge);
-        TextureRegion regionDownLarge = new TextureRegion(this.game.im.getUIButtonLarge());
-        TextureRegionDrawable drawDownLarge = new TextureRegionDrawable(regionDownLarge);
-
-        // Back button
-        TextureRegion backUp = new TextureRegion(this.game.im.getBackButton());
-        TextureRegion backDown = new TextureRegion(this.game.im.getBackButton());
-        TextureRegionDrawable drawBackUp = new TextureRegionDrawable(backUp);
-        TextureRegionDrawable drawBackDown = new TextureRegionDrawable(backDown);
-
-        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
-        TextButton.TextButtonStyle styleLarge = new TextButton.TextButtonStyle();
-        TextButton.TextButtonStyle styleBack = new TextButton.TextButtonStyle();
-        style.up = drawUp;
-        style.down = drawDown;
-        style.font = this.game.im.nameFont;
-
-        styleLarge.up = drawUpLarge;
-        styleLarge.down = drawDownLarge;
-        styleLarge.font = this.game.im.nameFont;
-
-        styleBack.up = drawBackUp;
-        styleBack.down = drawBackDown;
-        styleBack.font = this.game.im.nameFont;
-
-        ImageButton.ImageButtonStyle styleCancel = new ImageButton.ImageButtonStyle();
-        styleCancel.up = new TextureRegionDrawable(new TextureRegion(this.game.im.getCancelButton()));
-        styleCancel.down = new TextureRegionDrawable(new TextureRegion(this.game.im.getCancelButton()));
-
-        ImageButton.ImageButtonStyle styleOK = new ImageButton.ImageButtonStyle();
-        styleOK.up = new TextureRegionDrawable(new TextureRegion(this.game.im.getOKButton()));
-        styleOK.down = new TextureRegionDrawable(new TextureRegion(this.game.im.getOKButton()));
 
         TextButton button;
 
@@ -182,12 +205,14 @@ public class InputState extends State {
                 actor = new TextButton("",styleBack);
             }
             else if (layout[i] == "cancel"){
-                actor = new ImageButton(styleCancel);
+              //  actor = new ImageButton(styleCancel);
+                actor = new TextButton("Cancel",styleCancel);
                 right = true;
 
             }
             else if (layout[i] == "continue") {
-                actor = new ImageButton(styleOK);
+               // actor = new ImageButton(styleOK);
+                actor = new TextButton("Continue",styleOK);
                 right = true;
             }
 
@@ -206,7 +231,6 @@ public class InputState extends State {
         }
 
 		table.add(row);
-
 	}
 
 	public void removeLetter() {
@@ -240,7 +264,7 @@ public class InputState extends State {
 	public void handleInput() {
 		stage.act();
 		this.answerLabel.setText(text);
-		answerLabel.setText(text);
+		//answerLabel.setText(text);
 	}
 
 	@Override

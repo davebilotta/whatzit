@@ -192,15 +192,23 @@ public class PlayState extends State {
 
             // Check overlap with player
             if (touchedPlayer(touchRect)) {
-                this.gsm.push(new InputState(this.game, this.gsm, this, players[touchPlayer], "Enter Your Guess"));
+                this.gsm.push(new InputState(this.game, this.gsm, this, players[touchPlayer], "Enter Your Guess",""));
             }
             else {
-                // if touchedPause(touchRect) {
-                // this.gsm.push(new PauseState(this.game, this.gsm, this));
-                // }
+                if (touchedPause(touchRect)) {
+                this.gsm.push(new PauseState(this.game, this.gsm, this));
+                 }
             }
 		}
 	}
+
+    public boolean touchedPause (Rectangle touchRect) {
+        Rectangle pauseRect = new Rectangle(this.game.WIDTH - 100, (this.game.HEIGHT - this.game.im.getPauseButton().getWidth() - yOffset),
+                this.game.im.getPauseButton().getWidth(),
+                this.game.im.getPauseButton().getHeight());
+
+        return pauseRect.overlaps(touchRect);
+    }
 
     public boolean touchedPlayer(Rectangle touchRect) {
         boolean touched = false;
@@ -237,6 +245,7 @@ public class PlayState extends State {
 				this.game.qm.nextQuestion();
 				this.game.tm.nextQuestion();
 				questionover = false;
+                this.tick = 0;
 			}
 		} else {
 			this.tick += dt;
@@ -326,6 +335,7 @@ public class PlayState extends State {
 
 	public void renderUI(SpriteBatch sb) {
 		renderPlayerInfo(sb);
+        renderPauseButton(sb);
         renderTime(sb);
 	}
 
@@ -372,6 +382,10 @@ public class PlayState extends State {
         }
     }
 
+    public void renderPauseButton(SpriteBatch sb) {
+        sb.draw(this.game.im.getPauseButton(),this.game.WIDTH - 100, (this.game.HEIGHT - this.game.im.getPauseButton().getWidth() - yOffset));
+    }
+
     public void renderTime(SpriteBatch sb) {
 
         float time = this.delay - this.tick;
@@ -389,25 +403,6 @@ public class PlayState extends State {
         this.game.im.timeFont.draw(sb, timeString, this.game.WIDTH - timeWidth,
                 this.game.HEIGHT - yOffset);
     }
-
-    public void renderUINew(SpriteBatch sb) {
-
-		Table table = new Table();
-		table.setFillParent(true);
-
-		HorizontalGroup group = new HorizontalGroup();
-		group.align(Align.center);
-		group.addActor(new TextButton("Dave", skin));
-
-		table.add(group);
-		table.row();
-
-		stage.addActor(table);
-
-		stage.act();
-		stage.draw();
-
-	}
 
 	public String pad(int num) {
 		return String.format("%03d", num);

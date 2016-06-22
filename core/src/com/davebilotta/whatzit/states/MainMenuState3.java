@@ -83,7 +83,8 @@ public class MainMenuState3 extends State {
         skin.add("default", textButtonStyle);
 
         TextField.TextFieldStyle textFieldStyle =  new TextField.TextFieldStyle();
-        textFieldStyle.font = skin.getFont("default");
+        textFieldStyle.font = this.game.im.messageFont;
+                //skin.getFont("default");
         textFieldStyle.fontColor = Color.NAVY;
 
         skin.add("default", textFieldStyle);
@@ -215,7 +216,8 @@ public class MainMenuState3 extends State {
             if (this.playerButton) {
                playerId = this.id;
                 // TODO: Do we need to do anything with the stage here?
-                gsm.push(new InputState(game, gsm, state, null, "Enter name for player " + (this.id + 1)));
+
+                gsm.push(new InputState(game, gsm, state, null, "Enter name for player " + (this.id + 1),playerName(this.id)));
             }
             else if (this.buttonName.equals("back")) {
                 previousStage();
@@ -225,6 +227,15 @@ public class MainMenuState3 extends State {
             }
             }
     } // end UIClickListener class
+
+    public String playerName(int id) {
+        if (playerNames[id].equals("Player " + (id+1))) {
+            return "";
+        }
+        else {
+            return playerNames[id];
+        }
+    }
 
     private void previousStage() {
         stage.dispose();

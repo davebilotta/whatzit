@@ -5,9 +5,11 @@ import java.util.Comparator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 //import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
@@ -16,6 +18,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -97,11 +101,12 @@ public class GameOverState extends State {
 		stage.addActor(bkg);
 		
 		Table table = new Table(skin);
+        //table.setDebug(true);
+        table.align(Align.left);
 		table.setFillParent(true);
 
 		table.row();
-		//table.add(new Image(this.game.im.getGameOverImg()));
-        table.add(addLabel("GAME OVER!",uiFontStyle));
+	    table.add(addLabel("GAME OVER!",uiFontStyle));
 
 		// Winner name
 		table.row();
@@ -118,19 +123,30 @@ public class GameOverState extends State {
 			// # of points
 			table.row();
 			//
+
 			int start = 0;
 			if (hasWinner) {
-				table.add(addLabel("Winner: " + winners[0].getName()));
-				
+                HorizontalGroup groupH = new HorizontalGroup();
+                VerticalGroup groupV = new VerticalGroup();
+
+                groupH.addActor(addImage(this.game.im.getMedal(1)));
+				groupH.addActor(addLabel("Winner: " + winners[0].getName()));
+                groupH.space(10f);
+				groupV.addActor(groupH);
 				table.row().padBottom(40f);
-				table.add(addLabel(winners[0].getScore() + " points"));
-				
+
+                groupV.addActor(addLabel(winners[0].getScore() + " points"));
+
+                table.add(groupV);
 				start = 1;
 			}
 
 			table.row();
 			
 			for (int i = start; i < winners.length; i++) {
+                HorizontalGroup groupH = new HorizontalGroup();
+                VerticalGroup groupV = new VerticalGroup();
+
 				table.row();
 				String pt;
 				if (winners[i].getScore() == 1) { pt = "point"; 
@@ -138,8 +154,12 @@ public class GameOverState extends State {
 				else { pt = "points"; 
 				}
 				
-				table.add(addLabel(winners[i].getName() + ": "
+				groupH.addActor(addImage(this.game.im.getMedal(i+1)));
+                groupH.addActor(addLabel(winners[i].getName() + ": "
 						+ winners[i].getScore() + " " + pt));
+                groupH.space(10f);
+                groupH.padBottom(20f);
+                table.add(groupH);
 			}
 
 		}
@@ -165,6 +185,12 @@ public class GameOverState extends State {
         button.addListener(new UIClickListener(name.toLowerCase()));
 
         return button;
+    }
+
+    public Image addImage(Texture image) {
+      //  return new Image(new TextureRegionDrawable(new TextureRegion(Gdx.files.internal(path))));
+
+        return new Image(image);
     }
 
     public Label addLabel(String text) {

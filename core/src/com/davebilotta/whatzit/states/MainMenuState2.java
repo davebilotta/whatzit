@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -27,7 +28,8 @@ public class MainMenuState2 extends State {
 
 	private Skin skin, skinLabel;
 	private Stage stage;
-	
+	private Label.LabelStyle messageStyle, uiFontStyle;
+
 	private static int difficulty;
 	private static int mode;
 	private static int numPlayers;
@@ -35,13 +37,13 @@ public class MainMenuState2 extends State {
     // These are fields for the descriptor rows below the choices
     // Init text as nil
     private String gameModeRowLabelText = "";
-    private TextField gameModeRowLabelTextField;
+    private Label gameModeRowLabel;
 
     private String difficultyRowLabelText = "";
-    private TextField difficultyRowLabelTextField;
+    private Label difficultyRowLabel;
 
     private String numPlayersRowLabelText = "";
-    private TextField numPlayersRowLabelTextField;
+    private Label numPlayersRowLabel;
 
     @Override
     public void notifyResponse(Player player, String response) {  }
@@ -105,6 +107,14 @@ public class MainMenuState2 extends State {
         labelStyle.fontColor = Color.TAN;
         skinLabel.add("default",labelStyle);
 
+        uiFontStyle = new Label.LabelStyle();
+        uiFontStyle.font = this.game.im.messageFont;
+        uiFontStyle.fontColor = Color.BLUE;
+
+        messageStyle = new Label.LabelStyle();
+        messageStyle.font = this.game.im.nameFont;
+        messageStyle.fontColor = Color.WHITE;
+
         }
 
 	@Override
@@ -134,6 +144,15 @@ public class MainMenuState2 extends State {
 		handleInput();
 				
 	}
+
+    public Label addLabel(String text) {
+        return new Label(text,messageStyle);
+    }
+
+    public Label addLabel(String text, Label.LabelStyle style) {
+        return new Label(text,style);
+    }
+
 
     public TextField addText(String text) {
         return new TextField(text,skin);
@@ -172,7 +191,7 @@ public class MainMenuState2 extends State {
     }
 
     public float getRowSpacing() {
-    return 20f;
+    return 30f;
     }
 
 	public void setStage() {
@@ -186,115 +205,115 @@ public class MainMenuState2 extends State {
 		table.setFillParent(true);
         table.setHeight(this.game.HEIGHT);
 
-		HorizontalGroup row1 = new HorizontalGroup();
-		HorizontalGroup row2 = new HorizontalGroup();
-		HorizontalGroup row3 = new HorizontalGroup();
-		HorizontalGroup playRow = new HorizontalGroup();
+		HorizontalGroup row1_H = new HorizontalGroup();
+        VerticalGroup row1 = new VerticalGroup();
+
+		HorizontalGroup row2_H = new HorizontalGroup();
+        VerticalGroup row2 = new VerticalGroup();
+
+		HorizontalGroup row3_H = new HorizontalGroup();
+        VerticalGroup row3 = new VerticalGroup();
+
+        HorizontalGroup playRow = new HorizontalGroup();
 
         VerticalGroup buttons = new VerticalGroup();
+
         //
         // Game mode
         //
         table.row().align(Align.left);
         HorizontalGroup row1Label = new HorizontalGroup();
-        row1Label.addActor(addText("Game Mode"));
-       // table.add(row1Label);
-        buttons.addActor(row1Label);
+        row1Label.addActor(addLabel("Game Mode",uiFontStyle));
+        row1.addActor(row1Label);
 
         table.row().align(Align.left);
 		ButtonGroup row1_buttonGroup = new ButtonGroup();
-		row1.addActor(addButton("Normal", row1_buttonGroup,false));
-		row1.addActor(addButton("Macro",row1_buttonGroup,false));
-		row1.addActor(addButton("Mixed", row1_buttonGroup,false));
+		row1_H.addActor(addButton("Normal", row1_buttonGroup,false));
+		row1_H.addActor(addButton("Macro",row1_buttonGroup,false));
+		row1_H.addActor(addButton("Mixed", row1_buttonGroup,false));
 		row1_buttonGroup.setMaxCheckCount(1);
 		row1_buttonGroup.uncheckAll();
-        row1.space(getButtonSpacing());
-       // table.add(row1);
-        buttons.addActor(row1);
+        row1_H.space(getButtonSpacing());
+        row1.addActor(row1_H);
 
         //
         // Game Mode explanation
         //
-        table.row().align(Align.left);
-        gameModeRowLabelTextField = addText(gameModeRowLabelText,skinLabel);
-        //table.add(gameModeRowLabelTextField).minWidth(500);
-        buttons.addActor(gameModeRowLabelTextField);
-        //.minWidth(500);
+        table.row().align(Align.left).padBottom(getRowSpacing());
+        gameModeRowLabel = addLabel(gameModeRowLabelText);
+        row1.addActor(gameModeRowLabel);
+
+        buttons.addActor(row1);
 
         //
 		// Difficulty
         //
-        table.row().align(Align.left).padTop(getRowSpacing());
+        table.row().align(Align.left);
         HorizontalGroup row2Label = new HorizontalGroup();
-        row2Label.addActor(addText("Difficulty"));
+        row2Label.addActor(addLabel("Difficulty",uiFontStyle));
        // table.add(row2Label);
-        buttons.addActor(row2Label);
+        row2.addActor(row2Label);
 
 		table.row().align(Align.left);
 		ButtonGroup row2_buttonGroup = new ButtonGroup();
 		row2_buttonGroup.setMaxCheckCount(1);
-        row2.addActor(addButton("Easy", row2_buttonGroup,false));
-		row2.addActor(addButton("Medium",row2_buttonGroup,false));
-		row2.addActor(addButton("Hard", row2_buttonGroup,false));
-		row2.addActor(addButton("Insane", row2_buttonGroup,false));
+        row2_H.addActor(addButton("Easy", row2_buttonGroup,false));
+		row2_H.addActor(addButton("Medium",row2_buttonGroup,false));
+		row2_H.addActor(addButton("Hard", row2_buttonGroup,false));
+		row2_H.addActor(addButton("Insane", row2_buttonGroup,false));
 		row2_buttonGroup.uncheckAll();
 
-		row2.sizeBy(0.5f);
-        row2.space(getButtonSpacing());
-       // table.add(row2);
-        buttons.addActor(row2);
+		row2_H.sizeBy(0.5f);
+        row2_H.space(getButtonSpacing());
+        row2.addActor(row2_H);
 
         //
         // Difficulty explanation
         //
-        table.row().align(Align.left);
-        difficultyRowLabelTextField = addText(difficultyRowLabelText,skinLabel);
-       // table.add(difficultyRowLabelTextField).minWidth(500);
-        buttons.addActor(difficultyRowLabelTextField);
+        table.row().align(Align.left).padBottom(getRowSpacing());
+        difficultyRowLabel = addLabel(difficultyRowLabelText);
+        row2.addActor(difficultyRowLabel);
 
+        buttons.addActor(row2);
         //
         // Number of players
         //
-        table.row().align(Align.left).padTop(getRowSpacing());
+        table.row().align(Align.left);
         HorizontalGroup row3Label = new HorizontalGroup();
-        row3Label.addActor(addText("Number Of Players"));
-       // table.add(row3Label);
-        buttons.addActor(row3Label);
+        row3Label.addActor(addLabel("Number Of Players",uiFontStyle));
+        row3.addActor(row3Label);
 
 		table.row();
 		ButtonGroup row3_buttonGroup = new ButtonGroup();
 		row3_buttonGroup.setMaxCheckCount(1);
-		row3.addActor(addButton("One",row3_buttonGroup,false));
-		row3.addActor(addButton("Two",row3_buttonGroup,false));
-		row3.addActor(addButton("Three", row3_buttonGroup,false));
-        row3.addActor(addButton("Four", row3_buttonGroup,false));
+		row3_H.addActor(addButton("One",row3_buttonGroup,false));
+		row3_H.addActor(addButton("Two",row3_buttonGroup,false));
+		row3_H.addActor(addButton("Three", row3_buttonGroup,false));
+        row3_H.addActor(addButton("Four", row3_buttonGroup,false));
 		row3_buttonGroup.uncheckAll();
 
-        row3.align(Align.left);
-		row3.sizeBy(0.5f);
-        row3.space(getButtonSpacing());
-        buttons.addActor(row3);
+        row3_H.align(Align.left);
+		row3_H.sizeBy(0.5f);
+        row3_H.space(getButtonSpacing());
+        row3.addActor(row3_H);
 
         //
         // Number Of Players Explanation
         //
-        table.row().align(Align.left);
-        numPlayersRowLabelTextField = addText(numPlayersRowLabelText,skinLabel);
-        buttons.addActor(numPlayersRowLabelTextField);
+        table.row().align(Align.left).padBottom(getRowSpacing());
+        numPlayersRowLabel = addLabel(numPlayersRowLabelText);
+        row3.addActor(numPlayersRowLabel);
 
-      //  buttons.align(Align.bottom);
+        buttons.addActor(row3);
 
        /* buttons.setOrigin(buttons.getWidth() /2,buttons.getHeight()/2);
         buttons.setPosition(Gdx.graphics.getWidth() /2 - (buttons.getWidth() /2),
                 Gdx.graphics.getHeight()/2 - (buttons.getHeight()/2));
-*/
+       */
 
-     //   buttons.setFillParent(true);
-      //  buttons.align(Align.bottom);
         table.add(buttons).fillY().expand().align(Align.bottom).height(this.game.HEIGHT * 0.40f);
-        //.height(this.game.HEIGHT * 0.70f).fillY().align(Align.bottom);
 
-        //        buttons.align(Align.center);
+        buttons.space(40f);
 
         //
 		// Play row
@@ -304,8 +323,7 @@ public class MainMenuState2 extends State {
 		playRow.addActor(addButton("Next",true));
         playRow.align(Align.bottom).pad(20f);
 
-       // playRow.setHeight(table.getHeight() * 0.30f);
-        playRow.space(getButtonSpacing());
+       playRow.space(getButtonSpacing());
 
 		table.add(playRow).height(this.game.HEIGHT * 0.30f);
 
@@ -336,11 +354,11 @@ public class MainMenuState2 extends State {
 			}
 			else if (this.button.equals("macro")) {
 				MainMenuState2.mode = 2;
-                gameModeRowLabelText = "Macro images";
+                gameModeRowLabelText = "Close-up images";
 			}
 			else if (this.button.equals("mixed")) {
 				MainMenuState2.mode = 3;
-                gameModeRowLabelText = "A mixture of normal and macro images";
+                gameModeRowLabelText = "A medley of normal and macro images";
 
 			}
 
@@ -377,7 +395,7 @@ public class MainMenuState2 extends State {
             }
 			else if (this.button.equals("four")) {
 				MainMenuState2.numPlayers = 4;
-                numPlayersRowLabelText = "The max";
+                numPlayersRowLabelText = "Maxed Out";
             }
 
             else if (this.button.equals("back")) {
@@ -389,9 +407,9 @@ public class MainMenuState2 extends State {
 			
 			Utils.log("Received button event = current difficulty is " + MainMenuState2.difficulty + ", mode is " + MainMenuState2.mode + ", num players is " + MainMenuState2.numPlayers);
 
-            gameModeRowLabelTextField.setText(gameModeRowLabelText);
-            difficultyRowLabelTextField.setText(difficultyRowLabelText);
-            numPlayersRowLabelTextField.setText(numPlayersRowLabelText);
+            gameModeRowLabel.setText(gameModeRowLabelText);
+            difficultyRowLabel.setText(difficultyRowLabelText);
+            numPlayersRowLabel.setText(numPlayersRowLabelText);
 
         }
 		

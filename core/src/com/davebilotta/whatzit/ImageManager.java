@@ -21,14 +21,16 @@ public class ImageManager {
 	public BitmapFont nameFont, scoreFont, timeFont, uiFont, messageFont;
     public TextField.TextFieldStyle uiFontStyle;
 	private Texture tileEASY, tileMEDIUM, tileHARD, tileINSANE;
-	private Texture medal;
+	private Texture medal1, medal2, medal3, medal4;
 	private Texture p1, p2, p3, p4;
 	private Texture button;
+    private Texture pauseButton;
 	private Texture bkg,bkg2;
 	private Texture questionOver;
 	private Texture gameOver;
 	
-	private Texture cancelButton,okButton,uiButton,uiButtonLarge,backButton, uiButtonLargeUp, uiButtonLargeDown;
+	private Texture cancelButtonUp, cancelButtonDown,okButtonUp, okButtonDown,
+            uiButton,uiButtonLarge,backButton, uiButtonLargeUp, uiButtonLargeDown;
     private TextButton.TextButtonStyle uiButtonStyle;
 
     private Texture uiButtonLargeUp2, uiButtonLargeDown2;
@@ -58,7 +60,7 @@ public class ImageManager {
 				//Gdx.files.internal("fonts/AlfaSlabOne-Regular.ttf"));
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 		parameter.size = 24;
-		parameter.characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.!'()>?:-";
+		parameter.characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.!'()>?:-,";
 
 		FreeTypeFontParameter parameterSmall = new FreeTypeFontParameter();
 		parameterSmall.size = 16;
@@ -135,8 +137,11 @@ public class ImageManager {
 
 	private void buildMisc() {
 		// this.medal = new Texture(Gdx.files.internal("flat_medal8.png"));
-		this.medal = addImage("flatshadow_medal8.png");
-		
+		this.medal1 = addImage("medals/shaded_medal8.png");
+        this.medal2 = addImage("medals/shaded_medal7.png");
+        this.medal3 = addImage("medals/shaded_medal2.png");
+        this.medal4 = addImage("medals/shaded_medal9.png");
+
 		this.p1 = addImage("pieceRed_border00.png");
 		this.p2 = addImage("pieceGreen_border00.png");
 		this.p3 = addImage("pieceBlue_border01.png");
@@ -159,9 +164,18 @@ public class ImageManager {
         this.uiButtonLargeUp2 = addImage("ui/blue_button01.png");
         this.uiButtonLargeDown2 = addImage("ui/blue_button00.png");
 
-        this.cancelButton = addImage("ui/red_boxCross.png");
-		this.okButton = addImage("ui/green_boxCheckmark.png");
-		this.backButton = addImage("ui/yellow_sliderLeft.png");
+        //this.cancelButton = addImage("ui/red_boxCross.png");
+        this.cancelButtonUp = addImage("ui/red_button01.png");
+        this.cancelButtonDown = addImage("ui/red_button00.png");
+
+        //this.okButton = addImage("ui/green_boxCheckmark.png");
+        this.okButtonUp = addImage("ui/green_button04.png");
+        this.okButtonDown = addImage("ui/green_button05.png");
+
+        this.backButton = addImage("ui/yellow_sliderLeft.png");
+
+        this.pauseButton = addImage("ui/pauseButton.png");
+
 	}
     private void buildSkin() {
         this.uiButtonStyle = new TextButton.TextButtonStyle();
@@ -204,8 +218,24 @@ public class ImageManager {
 		}
 	}
 
-	public Texture getMedal() {
-		return this.medal;
+	public Texture getMedal(int num) {
+        switch (num) {
+            case 1:
+                return this.medal1;
+                // break;
+            case 2:
+                return this.medal2;
+           // break;
+            case 3:
+                return this.medal3;
+           // break;
+            case 4:
+                return this.medal4;
+           // break;
+            default:
+                return this.medal1;
+           // break;
+        }
 	}
 	
 	public Texture getButton() {
@@ -248,6 +278,8 @@ public class ImageManager {
 		return this.uiButton;
 	}
 
+    public Texture getPauseButton() { return this.pauseButton; }
+
     public Texture getUIButtonLarge() { return this.uiButtonLarge; }
 
     public TextButton.TextButtonStyle getUIButtonStyle() { return this.uiButtonStyle;  }
@@ -259,13 +291,14 @@ public class ImageManager {
 
         return this.messageButtonStyle;  }
 
-    public Texture getCancelButton() {
-		return this.cancelButton;
+    public Texture getCancelButton(boolean up) {
+
+        return up ? this.cancelButtonUp : this.cancelButtonDown;
 	}
 	
-	public Texture getOKButton() { 
-		return this.okButton;
-	}
+	public Texture getOKButton(boolean up ) {
+		return up ? this.okButtonUp : this.okButtonDown;
+        }
 
     public Texture getBackButton() { return this.backButton;
     }
